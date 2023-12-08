@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class Deck : MonoBehaviour
 {
-
+    // Singleton pattern
+    public static Deck Instance { get; private set; }
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Optional: if you want the deck to persist across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Ensures there's only one instance
+        }
+    }
+    public GameObject spawnCard;
     public List<Card> cards = new List<Card>();
     //Stack of cards
     private Stack<Card> deck = new();
@@ -16,14 +30,13 @@ public class Deck : MonoBehaviour
             card.Initialize();
         }
         ShuffleCards();
-        PrintDeck();
+        //PrintDeck();
     }
 
 
     public void ShuffleCards()
     {
         //Shuffle the cards
-        //https://stackoverflow.com/questions/273313/randomize-a-listt
         System.Random rng = new System.Random();
         int n = cards.Count;
         while (n > 1)
@@ -42,12 +55,17 @@ public class Deck : MonoBehaviour
             deck.Push(card);
         }
     }
-    public void TakeCard()
+    public Card GetCard()
     {
+        if (deck.Count == 0)
+        {
+            Debug.Log("No cards left");
+            return null;
+        }
         //Take a card from the deck
-        Card card = deck.Pop();
-        //Display the card
-        Debug.Log(card.GetCardName());
+        return deck.Pop();
+
+        //Spawn the card
     }
     public void PrintDeck()
     {

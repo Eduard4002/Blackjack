@@ -123,6 +123,56 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &107314544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 107314546}
+  - component: {fileID: 107314545}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &107314545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107314544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fcc8df121446914faaccf087c6f038c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnCard: {fileID: 1887635783383692585, guid: d171fec2afb294f4ca2d53e737f86b88, type: 3}
+  cardSpacing: 0.75
+  handPosition: {x: 0, y: -2}
+  hand: []
+  handValue: 0
+  isStanding: 0
+--- !u!4 &107314546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107314544}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &322644152
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,6 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 140fcde07c3e05c41b95661469dee3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnCard: {fileID: 0}
   cards:
   - {fileID: 11400000, guid: 97c79cbd1d9a3e843a59dbe280b2f186, type: 2}
   - {fileID: 11400000, guid: f30db6685c15a5d42b52bd3473511ede, type: 2}
@@ -256,7 +307,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.2722944, g: 0.27279627, b: 0.2735849, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -318,3 +369,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 322644154}
+  - {fileID: 107314546}
