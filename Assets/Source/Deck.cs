@@ -18,7 +18,7 @@ public class Deck : MonoBehaviour
             Destroy(gameObject); // Ensures there's only one instance
         }
     }
-    public GameObject spawnCard;
+
     public List<Card> cards = new List<Card>();
     //Stack of cards
     private Stack<Card> deck = new();

@@ -15,3 +15,5 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 0bb2c4ae7a5942640b56e72a62c0d66f, type: 3}
   value: 7
   cardSuit: 3
+  isFlipped: 0
+  cardBack: {fileID: 21300000, guid: 0bd50f059228d8843b845226992fd8e5, type: 3}

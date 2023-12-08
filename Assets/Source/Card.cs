@@ -13,6 +13,8 @@ public class Card : ScriptableObject
     public enum Suit { Hearts, Diamonds, Clubs, Spades }
     [HideInInspector]
     public Suit cardSuit;
+    public bool isFlipped = false;
+    public Sprite cardBack;
     public void Initialize()
     {
         // Assuming cardImage is already set and has a name like "Clovers_2_white"
