@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 970260ad72b8196408f4d0fa5f811a68, type: 3}
-  m_Name: AceHearts
+  m_Name: 4 of Spades SO
   m_EditorClassIdentifier: 
-  cardImage: {fileID: 21300000, guid: 777fe64c97344574fa57d4da640a2f36, type: 3}
-  name: Ace
-  value: 11
-  cardSuit: 0
+  cardImage: {fileID: 21300000, guid: bd15a71760ab13941a8ee222c436f942, type: 3}
+  value: 4
+  cardSuit: 3
