@@ -280,11 +280,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3188f554393236340a258032f231c45e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dealerStandValue: 17
   playerPositions:
-  - {fileID: 107314544}
   - {fileID: 595350253}
+  - {fileID: 107314544}
   - {fileID: 1995122625}
-  numberOfPlayers: 2
+  numberOfPlayers: 3
   dealer: {fileID: 2021460879}
 --- !u!114 &322644156
 MonoBehaviour:

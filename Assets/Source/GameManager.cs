@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public GameState CurrentState { get; private set; }
     private int currentPlayerIndex = 0;
+    public int dealerStandValue = 17;
+
 
     public GameObject[] playerPositions; // Assign in Inspector
     public int numberOfPlayers = 2; // Set this to the desired number of players
@@ -41,7 +43,7 @@ public class GameManager : MonoBehaviour
                 StartPlayerTurn();
                 break;
             case GameState.DealerTurn:
-                // Dealer's actions
+                StartCoroutine(DealerTurn());
                 break;
             case GameState.EvaluatingWinner:
                 // Evaluate the winner of the round
@@ -64,15 +66,18 @@ public class GameManager : MonoBehaviour
 
     void InitializePlayers()
     {
+        // Determine the starting index based on the number of players
+        int startIndex = numberOfPlayers == 1 ? 1 : 0; // Assuming index 1 is opposite the dealer
+
         for (int i = 0; i < numberOfPlayers; i++)
         {
-            if (i < playerPositions.Length)
+            int positionIndex = (startIndex + i) % playerPositions.Length;
+            if (positionIndex < playerPositions.Length)
             {
-                Player player = playerPositions[i].GetComponent<Player>();
+                Player player = playerPositions[positionIndex].GetComponent<Player>();
                 if (player != null)
                 {
                     player.gameObject.SetActive(true);
-                    // Perform additional player initialization here
                     players.Add(player);
                 }
             }
@@ -89,12 +94,16 @@ public class GameManager : MonoBehaviour
             if (isDealer && i == 1)
             {
                 card.isFlipped = true;
+                if (user is Dealer dealer)
+                {
+                    dealer.SetHiddenCard(card); // Set the hidden card for the dealer
+                }
             }
 
             user.TakeCard(card);
 
             // Here, you would also update the UI to show the player's hand
-            HandDisplay.Instance.DisplayCard(user, card, user.transform.position, user.hand.Count);
+            HandDisplay.Instance.DisplayCard(card, user.transform.position, user.hand.Count);
 
         }
     }
@@ -112,6 +121,7 @@ public class GameManager : MonoBehaviour
         if (currentPlayer.CalculateHandValue() > 21)
         {
             currentPlayerIndex++;
+            Debug.Log("Bust: " + currentPlayerIndex);
             StartPlayerTurn(); // Move to the next player
         }
         else
@@ -121,6 +131,7 @@ public class GameManager : MonoBehaviour
         }
     }
     IEnumerator WaitForPlayerInput(Player player)
+
     {
         bool turnEnded = false;
         while (!turnEnded)
@@ -129,7 +140,7 @@ public class GameManager : MonoBehaviour
             {
                 Card card = Deck.Instance.GetCard();
                 player.TakeCard(card);
-                HandDisplay.Instance.DisplayCard(player, card, player.transform.position, player.hand.Count);
+                HandDisplay.Instance.DisplayCard(card, player.transform.position, player.hand.Count);
                 if (player.CalculateHandValue() > 21)
                 {
                     turnEnded = true;
@@ -144,6 +155,24 @@ public class GameManager : MonoBehaviour
 
         currentPlayerIndex++;
         StartPlayerTurn(); // Proceed to the next player's turn
+    }
+    IEnumerator DealerTurn()
+    {
+        // Reveal dealer's hidden card
+        dealer.RevealHiddenCard();
+        HandDisplay.Instance.UpdateCardSprite(dealer.GetHiddenCard());
+
+        // Keep hitting until the dealer's hand value reaches or exceeds the threshold
+        while (dealer.CalculateHandValue() < dealerStandValue)
+        {
+            yield return new WaitForSeconds(1); // Wait time between hits for better readability
+            Card newCard = Deck.Instance.GetCard();
+            dealer.TakeCard(newCard);
+            HandDisplay.Instance.DisplayCard(newCard, dealer.transform.position, dealer.hand.Count);
+        }
+
+        // Once the dealer is done, move to the next state
+        SetState(GameState.EvaluatingWinner);
     }
 }
 public enum GameState
