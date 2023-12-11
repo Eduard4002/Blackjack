@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         InitializePlayers();
         Deck.Instance.ShuffleCards();
         //Will be changed to placing bets
-        SetState(GameState.DealingInitialCards);
+        SetState(GameState.PlacingBets);
     }
     void SetState(GameState newState)
     {
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.PlacingBets:
-                // Logic for placing bets
+                StartCoroutine(PlaceBets());
                 break;
             case GameState.DealingInitialCards:
                 DealInitialCardsToAll();
@@ -52,6 +52,17 @@ public class GameManager : MonoBehaviour
                 // Wrap up the round
                 break;
         }
+    }
+    IEnumerator PlaceBets()
+    {
+        foreach (Player player in players)
+        {
+            // For now, assign a default bet or implement a method for players to choose a bet
+            player.PlaceBet(100);  // Example fixed bet amount
+            Debug.Log("Bet placed: " + player.currentBet);
+            yield return new WaitForSeconds(1);  // Wait time for bet placement
+        }
+        SetState(GameState.DealingInitialCards);
     }
     void DealInitialCardsToAll()
     {

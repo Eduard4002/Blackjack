@@ -9,8 +9,35 @@ public class Player : MonoBehaviour
 
     public readonly List<Card> hand = new List<Card>();
     public int handValue = 0;
-    public bool isStanding = false;
-    bool isBust = false;
+
+    public float funds = 100;  // Starting funds
+    public float currentBet = 0;
+
+    public bool PlaceBet(int amount)
+    {
+        if (amount <= funds)
+        {
+            currentBet = amount;
+            funds -= amount;
+            return true;
+        }
+        return false;  // Not enough funds
+    }
+
+    // Methods to handle win/loss
+    public void WinBet(bool isBlackJack)
+    {
+        if (isBlackJack)
+        {
+            funds += currentBet + (currentBet * 1.5f);  // 3:2 payout for Blackjack
+        }
+        else
+        {
+            funds += currentBet * 2;  // 1:1 payout for regular win
+        }
+        currentBet = 0;
+    }
+
 
     // Add a card to the player's hand and update the hand value
     public void TakeCard(Card card)
@@ -21,21 +48,6 @@ public class Player : MonoBehaviour
     }
 
 
-    // Player decides to stand
-    public void Stand()
-    {
-        isStanding = true;
-    }
-    void Update()
-    {
-        if (isBust) return;
-
-        if (handValue > 21)
-        {
-            Debug.Log("Bust");
-            isBust = true;
-        }
-    }
 
     // Calculate the total value of the hand
     public int CalculateHandValue()
