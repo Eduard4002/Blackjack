@@ -58,6 +58,16 @@ public class HandDisplay : MonoBehaviour
             Debug.LogError("Card GameObject not found in map.");
         }
     }
-
+    public void SetHandColor(Player player, Color color)
+    {
+        foreach (Card card in player.hand)
+        {
+            if (cardGameObjectMap.TryGetValue(card, out GameObject cardObject))
+            {
+                SpriteRenderer renderer = cardObject.GetComponent<SpriteRenderer>();
+                renderer.color = color; // Set the new colors
+            }
+        }
+    }
 
 }

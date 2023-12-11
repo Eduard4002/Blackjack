@@ -15,6 +15,20 @@ public class GameManager : MonoBehaviour
 
     public Dealer dealer; // Assign in Inspector
 
+    public static GameManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         InitializePlayers();
@@ -46,10 +60,13 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(DealerTurn());
                 break;
             case GameState.EvaluatingWinner:
-                // Evaluate the winner of the round
+
                 break;
             case GameState.RoundEnd:
-                // Wrap up the round
+                foreach (Player player in players)
+                {
+                    HandDisplay.Instance.SetHandColor(player, Color.white);
+                }
                 break;
         }
     }
@@ -120,6 +137,10 @@ public class GameManager : MonoBehaviour
     }
     void StartPlayerTurn()
     {
+        foreach (Player player in players)
+        {
+            HandDisplay.Instance.SetHandColor(player, new Color(0.5f, 0.5f, 0.5f, 1f));
+        }
         if (currentPlayerIndex >= players.Count)
         {
             // All players have had their turn, move to dealer's turn
@@ -135,38 +156,42 @@ public class GameManager : MonoBehaviour
             Debug.Log("Bust: " + currentPlayerIndex);
             StartPlayerTurn(); // Move to the next player
         }
-        else
-        {
-            // Wait for player input (H to Hit, S to Stand)
-            StartCoroutine(WaitForPlayerInput(currentPlayer));
-        }
-    }
-    IEnumerator WaitForPlayerInput(Player player)
 
+    }
+
+    public void PlayerHit()
     {
-        bool turnEnded = false;
-        while (!turnEnded)
+        if (CurrentState != GameState.PlayerTurn)
         {
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                Card card = Deck.Instance.GetCard();
-                player.TakeCard(card);
-                HandDisplay.Instance.DisplayCard(card, player.transform.position, player.hand.Count);
-                if (player.CalculateHandValue() > 21)
-                {
-                    turnEnded = true;
-                }
-            }
-            else if (Input.GetKeyDown(KeyCode.S))
-            {
-                turnEnded = true;
-            }
-            yield return null;
+            return;
         }
 
-        currentPlayerIndex++;
-        StartPlayerTurn(); // Proceed to the next player's turn
+        Card card = Deck.Instance.GetCard();
+        players[currentPlayerIndex].TakeCard(card);
+        HandDisplay.Instance.DisplayCard(card, players[currentPlayerIndex].transform.position, players[currentPlayerIndex].hand.Count);
+
+        if (players[currentPlayerIndex].CalculateHandValue() > 21)
+        {
+            // Move to next player
+            currentPlayerIndex++;
+            StartPlayerTurn();
+        }
+
     }
+
+    public void PlayerStand()
+    {
+        if (CurrentState != GameState.PlayerTurn)
+        {
+            return;
+        }
+
+        // Move to next player
+        currentPlayerIndex++;
+        StartPlayerTurn();
+
+    }
+
     IEnumerator DealerTurn()
     {
         // Reveal dealer's hidden card

@@ -37,6 +37,10 @@ public class Player : MonoBehaviour
         }
         currentBet = 0;
     }
+    public void LoseBet()
+    {
+        currentBet = 0;  // Bet is already subtracted when placed
+    }
 
 
     // Add a card to the player's hand and update the hand value
