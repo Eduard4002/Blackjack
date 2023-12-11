@@ -64,8 +64,6 @@ public class Deck : MonoBehaviour
         }
         //Take a card from the deck
         return deck.Pop();
-
-        //Spawn the card
     }
     public void PrintDeck()
     {

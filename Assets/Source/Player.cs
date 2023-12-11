@@ -12,8 +12,6 @@ public class Player : MonoBehaviour
     public bool isStanding = false;
     bool isBust = false;
 
-    public bool isDealer = false;
-
     // Add a card to the player's hand and update the hand value
     public void TakeCard(Card card)
     {
@@ -40,7 +38,7 @@ public class Player : MonoBehaviour
     }
 
     // Calculate the total value of the hand
-    private int CalculateHandValue()
+    public int CalculateHandValue()
     {
         int value = 0;
         int aceCount = 0;

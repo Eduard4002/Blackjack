@@ -21,20 +21,24 @@ public class HandDisplay : MonoBehaviour
         }
     }
 
-    public void DisplayCardForPlayer(Card card, Vector3 handPosition, int cardCount)
+    public void DisplayCard(Player player, Card card, Vector3 handPosition, int cardCount)
     {
         // Calculate position based on handPosition and number of cards
         Vector3 cardPosition = new Vector3(handPosition.x, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
 
         GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
 
+
         if (card.isFlipped)
         {
             newCard.GetComponent<SpriteRenderer>().sprite = card.cardBack;
+            newCard.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 1f);
         }
         else
         {
             newCard.GetComponent<SpriteRenderer>().sprite = card.cardImage;
+            newCard.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+
 
         }
     }

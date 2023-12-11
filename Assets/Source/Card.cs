@@ -49,6 +49,7 @@ public class Card : ScriptableObject
                 };
             }
         }
+        isFlipped = false;
         //Used for auto naming the scriptable object, do not need it anymore
         /*
                 //Set the scriptable object name
