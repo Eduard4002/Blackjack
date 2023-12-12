@@ -59,6 +59,11 @@ public class Player : MonoBehaviour
         handValue = CalculateHandValue();
 
     }
+    public void ResetHand()
+    {
+        hand.Clear();
+        handValue = 0;
+    }
 
 
 

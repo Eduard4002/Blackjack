@@ -65,10 +65,7 @@ public class GameManager : MonoBehaviour
                 EvaluateWinners();
                 break;
             case GameState.RoundEnd:
-                foreach (Player player in players)
-                {
-                    HandDisplay.Instance.SetHandColor(player, CardColor.Active);
-                }
+
                 break;
         }
     }
@@ -263,6 +260,28 @@ public class GameManager : MonoBehaviour
 
         // Once the dealer is done, move to the next state
         SetState(GameState.EvaluatingWinner);
+    }
+
+    public void RestartGame()
+    {
+        foreach (Player player in players)
+        {
+            player.ResetHand();
+
+            HandDisplay.Instance.ClearHand(player);
+        }
+        // Reset the deck
+        Deck.Instance.ShuffleCards();
+
+        // Reset the dealer
+        dealer.ResetHand();
+
+        // Reset the UI
+        UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+
+        // Reset the state
+        currentPlayerIndex = 0;
+        SetState(GameState.PlacingBets);
     }
 }
 public enum GameState

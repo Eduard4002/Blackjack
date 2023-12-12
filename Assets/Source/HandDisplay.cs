@@ -76,5 +76,16 @@ public class HandDisplay : MonoBehaviour
             }
         }
     }
+    public void ClearHand(Player player)
+    {
+        foreach (Card card in player.hand)
+        {
+            if (cardGameObjectMap.TryGetValue(card, out GameObject cardObject))
+            {
+                Destroy(cardObject); // Destroy the card GameObject
+            }
+        }
+        cardGameObjectMap.Clear(); // Clear the dictionary
+    }
 
 }
