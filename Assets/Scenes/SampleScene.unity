@@ -275,7 +275,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &107314545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -572,6 +572,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 1887635783383692585, guid: d171fec2afb294f4ca2d53e737f86b88, type: 3}
   cardSpacing: 0.5
+  activeColor: {r: 1, g: 1, b: 1, a: 1}
+  inactiveColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  backColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &322644157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1337,8 +1340,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 322644154}
-  - {fileID: 107314546}
   - {fileID: 595350255}
+  - {fileID: 107314546}
   - {fileID: 1995122627}
   - {fileID: 2021460880}
   - {fileID: 1419481200}

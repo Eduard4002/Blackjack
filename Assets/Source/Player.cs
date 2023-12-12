@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
     // Methods to handle win/loss
     public void WinBet(bool isBlackJack)
     {
+        Debug.Log("Player has won!");
+        Debug.Log("Has Blackjack: " + isBlackJack);
         if (isBlackJack)
         {
             funds += currentBet + (currentBet * 1.5f);  // 3:2 payout for Blackjack
@@ -39,7 +41,14 @@ public class Player : MonoBehaviour
     }
     public void LoseBet()
     {
+        Debug.Log("Player has lost!");
         currentBet = 0;  // Bet is already subtracted when placed
+    }
+    public void PushBet()
+    {
+        Debug.Log("Player has pushed!");
+        funds += currentBet;  // Return the bet to the player
+        currentBet = 0;
     }
 
 

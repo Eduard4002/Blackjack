@@ -60,12 +60,12 @@ public class GameManager : MonoBehaviour
                 StartCoroutine(DealerTurn());
                 break;
             case GameState.EvaluatingWinner:
-
+                EvaluateWinners();
                 break;
             case GameState.RoundEnd:
                 foreach (Player player in players)
                 {
-                    HandDisplay.Instance.SetHandColor(player, Color.white);
+                    HandDisplay.Instance.SetHandColor(player, CardColor.Active);
                 }
                 break;
         }
@@ -111,7 +111,42 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    void EvaluateWinners()
+    {
+        int dealerValue = dealer.CalculateHandValue();
+        bool dealerBust = dealerValue > 21;
 
+        foreach (Player player in players)
+        {
+            int playerValue = player.CalculateHandValue();
+            bool playerBust = playerValue > 21;
+
+            if (playerBust)
+            {
+                // Player busts and loses their bet
+                player.LoseBet();
+            }
+            else if (dealerBust || playerValue > dealerValue)
+            {
+                // Player wins
+                bool isBlackJack = playerValue == 21 && player.hand.Count == 2;
+                player.WinBet(isBlackJack);
+            }
+            else if (playerValue == dealerValue)
+            {
+                // Push - player gets their bet back
+                player.PushBet();
+            }
+            else
+            {
+                // Player loses
+                player.LoseBet();
+            }
+        }
+
+        // Proceed to the next state or round
+        SetState(GameState.RoundEnd);
+    }
     void DealInitialCards(Player user, bool isDealer = false)
     {
 
@@ -137,10 +172,18 @@ public class GameManager : MonoBehaviour
     }
     void StartPlayerTurn()
     {
-        foreach (Player player in players)
+        for (int i = 0; i < players.Count; i++)
         {
-            HandDisplay.Instance.SetHandColor(player, new Color(0.5f, 0.5f, 0.5f, 1f));
+            if (i == currentPlayerIndex)
+            {
+                HandDisplay.Instance.SetHandColor(players[i], CardColor.Active);
+            }
+            else
+            {
+                HandDisplay.Instance.SetHandColor(players[i], CardColor.Inactive);
+            }
         }
+
         if (currentPlayerIndex >= players.Count)
         {
             // All players have had their turn, move to dealer's turn
