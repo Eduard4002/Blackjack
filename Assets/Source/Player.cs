@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     public float funds = 100;  // Starting funds
     public float currentBet = 0;
 
-    public bool PlaceBet(int amount)
+    public bool PlaceBet(float amount)
     {
         if (amount <= funds)
         {

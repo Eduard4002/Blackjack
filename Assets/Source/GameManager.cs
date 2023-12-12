@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     {
         InitializePlayers();
         Deck.Instance.ShuffleCards();
+        currentPlayerIndex = 0;
         //Will be changed to placing bets
         SetState(GameState.PlacingBets);
     }
@@ -47,7 +48,8 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.PlacingBets:
-                StartCoroutine(PlaceBets());
+                //Activate the slider inside the UIManager
+                UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
                 break;
             case GameState.DealingInitialCards:
                 DealInitialCardsToAll();
@@ -70,16 +72,25 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-    IEnumerator PlaceBets()
+
+
+    public void PlaceBet(float betAmount)
     {
-        foreach (Player player in players)
+        //if (CurrentState != GameState.PlacingBets) return;
+        players[currentPlayerIndex].PlaceBet(betAmount);
+        Debug.Log("Bet placed: " + betAmount);
+        // Proceed to the next player or next state
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= players.Count)
         {
-            // For now, assign a default bet or implement a method for players to choose a bet
-            player.PlaceBet(100);  // Example fixed bet amount
-            Debug.Log("Bet placed: " + player.currentBet);
-            yield return new WaitForSeconds(1);  // Wait time for bet placement
+            UIManager.Instance.HideBetSlider();
+            SetState(GameState.DealingInitialCards);
         }
-        SetState(GameState.DealingInitialCards);
+        else
+        {
+            UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+        }
+
     }
     void DealInitialCardsToAll()
     {
