@@ -49,12 +49,15 @@ public class GameManager : MonoBehaviour
         {
             case GameState.PlacingBets:
                 //Activate the slider inside the UIManager
+                UIManager.Instance.ShowPlayerInfo(false);
                 UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
                 break;
             case GameState.DealingInitialCards:
                 DealInitialCardsToAll();
                 break;
             case GameState.PlayerTurn:
+                UIManager.Instance.ShowPlayerInfo(true);
+
                 StartPlayerTurn();
                 break;
             case GameState.DealerTurn:
@@ -276,10 +279,12 @@ public class GameManager : MonoBehaviour
     {
         foreach (Player player in players)
         {
+
             player.Reset();
 
-            HandDisplay.Instance.ClearHand(player);
         }
+        HandDisplay.Instance.ClearAllHands();
+
         // Reset the deck
         Deck.Instance.ShuffleCards();
 

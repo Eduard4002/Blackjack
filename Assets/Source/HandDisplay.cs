@@ -88,5 +88,13 @@ public class HandDisplay : MonoBehaviour
         }
         cardGameObjectMap.Clear(); // Clear the dictionary
     }
+    public void ClearAllHands()
+    {
+        foreach (var pair in cardGameObjectMap)
+        {
+            Destroy(pair.Value); // Destroy the card GameObject
+        }
+        cardGameObjectMap.Clear(); // Clear the dictionary
+    }
 
 }

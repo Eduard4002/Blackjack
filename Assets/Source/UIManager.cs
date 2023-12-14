@@ -96,8 +96,14 @@ public class UIManager : MonoBehaviour
     public void OnBetSliderChanged(float value)
     {
         UpdateBetAmountText(value);
-        // Optionally, you can call a method in GameManager to update the current bet
     }
+    public void ShowPlayerInfo(bool show)
+    {
+        currentPlayerText.gameObject.SetActive(show);
+        handValueText.gameObject.SetActive(show);
+        currentBetText.gameObject.SetActive(show);
+    }
+
 
     private void UpdateBetAmountText(float value)
     {
