@@ -64,10 +64,12 @@ public class GameManager : MonoBehaviour
                 EvaluateWinners();
                 break;
             case GameState.RoundEnd:
+                UIManager.Instance.ShowEndRoundSummary(players);
 
                 break;
         }
     }
+
 
 
     public void PlaceBet(float betAmount)
@@ -178,6 +180,11 @@ public class GameManager : MonoBehaviour
     }
     void StartPlayerTurn()
     {
+        // Color update for active/inactive players
+        for (int i = 0; i < players.Count; i++)
+        {
+            HandDisplay.Instance.SetHandColor(players[i], i == currentPlayerIndex ? CardColor.Active : CardColor.Inactive);
+        }
         if (currentPlayerIndex >= players.Count)
         {
             // All players have had their turn, move to dealer's turn
@@ -188,15 +195,11 @@ public class GameManager : MonoBehaviour
         Player currentPlayer = players[currentPlayerIndex];
 
         // UI Updates
-        UIManager.Instance.UpdateCurrentPlayerText((currentPlayerIndex + 1).ToString());
+        UIManager.Instance.UpdateCurrentPlayerText("Player: " + players[currentPlayerIndex].name);
         UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
         UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
 
-        // Color update for active/inactive players
-        for (int i = 0; i < players.Count; i++)
-        {
-            HandDisplay.Instance.SetHandColor(players[i], i == currentPlayerIndex ? CardColor.Active : CardColor.Inactive);
-        }
+
 
         // Check if currentPlayer's hand value is over 21
         if (currentPlayer.CalculateHandValue() > 21)
@@ -222,6 +225,7 @@ public class GameManager : MonoBehaviour
 
         if (players[currentPlayerIndex].CalculateHandValue() > 21)
         {
+
             // Player busts, move to the next player
             currentPlayerIndex++;
             StartPlayerTurn();
@@ -246,6 +250,10 @@ public class GameManager : MonoBehaviour
         dealer.RevealHiddenCard();
         HandDisplay.Instance.UpdateCardSprite(dealer.GetHiddenCard());
 
+        UIManager.Instance.UpdateCurrentPlayerText("Dealer");
+        UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValue());
+        UIManager.Instance.UpdateCurrentBetText(" ");
+
         // Keep hitting until the dealer's hand value reaches or exceeds the threshold
         while (dealer.CalculateHandValue() < dealerStandValue)
         {
@@ -253,9 +261,14 @@ public class GameManager : MonoBehaviour
             Card newCard = Deck.Instance.GetCard();
             dealer.TakeCard(newCard);
             HandDisplay.Instance.DisplayCard(newCard, dealer.transform.position, dealer.hand.Count);
+            UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValue());
+
         }
 
-        // Once the dealer is done, move to the next state
+        // Wait for 3 seconds after the dealer finishes their turn
+        yield return new WaitForSeconds(3);
+
+        // Transition to evaluating winner
         SetState(GameState.EvaluatingWinner);
     }
 
@@ -263,7 +276,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (Player player in players)
         {
-            player.ResetHand();
+            player.Reset();
 
             HandDisplay.Instance.ClearHand(player);
         }
@@ -271,13 +284,17 @@ public class GameManager : MonoBehaviour
         Deck.Instance.ShuffleCards();
 
         // Reset the dealer
-        dealer.ResetHand();
+        dealer.Reset();
 
         // Reset the UI
-        UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+        UIManager.Instance.HideEndRoundSummary();
 
         // Reset the state
         currentPlayerIndex = 0;
+
+        UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+
+
         SetState(GameState.PlacingBets);
     }
 }

@@ -13,6 +13,11 @@ public class Player : MonoBehaviour
     public float funds = 100;  // Starting funds
     public float currentBet = 0;
 
+    public float wonAmount = 0;
+    public bool hasWon = false;
+
+    public new string name = "Player";
+
     public bool PlaceBet(float amount)
     {
         if (amount <= funds)
@@ -27,28 +32,31 @@ public class Player : MonoBehaviour
     // Methods to handle win/loss
     public void WinBet(bool isBlackJack)
     {
-        Debug.Log("Player has won!");
-        Debug.Log("Has Blackjack: " + isBlackJack);
+        hasWon = true;
         if (isBlackJack)
         {
             funds += currentBet + (currentBet * 1.5f);  // 3:2 payout for Blackjack
+            wonAmount = currentBet + (currentBet * 1.5f);
         }
         else
         {
             funds += currentBet * 2;  // 1:1 payout for regular win
+            wonAmount = currentBet * 2;
         }
-        currentBet = 0;
     }
     public void LoseBet()
     {
-        Debug.Log("Player has lost!");
-        currentBet = 0;  // Bet is already subtracted when placed
+        hasWon = false;
     }
     public void PushBet()
     {
-        Debug.Log("Player has pushed!");
         funds += currentBet;  // Return the bet to the player
+    }
+    public void Reset()
+    {
         currentBet = 0;
+        hasWon = false;
+        ResetHand();
     }
 
 
@@ -59,7 +67,7 @@ public class Player : MonoBehaviour
         handValue = CalculateHandValue();
 
     }
-    public void ResetHand()
+    void ResetHand()
     {
         hand.Clear();
         handValue = 0;

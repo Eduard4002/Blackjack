@@ -15,6 +15,11 @@ public class UIManager : MonoBehaviour
     public GameObject placeBetButton;
     public GameObject hitButton;
     public GameObject standButton;
+
+
+
+    public GameObject summaryPanel;
+    public TextMeshProUGUI[] playerSummaryTexts; // Assuming 3 text objects
     private void Awake()
     {
         if (Instance == null)
@@ -37,6 +42,36 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.PlayerStand();
     }
+    public void ShowEndRoundSummary(List<Player> players)
+    {
+        summaryPanel.SetActive(true);
+
+        // Activate only the needed text objects based on the number of players
+        for (int i = 0; i < playerSummaryTexts.Length; i++)
+        {
+            if (i < players.Count)
+            {
+                playerSummaryTexts[i].gameObject.SetActive(true);
+                playerSummaryTexts[i].text = FormatPlayerSummary(players[i]);
+            }
+            else
+            {
+                playerSummaryTexts[i].gameObject.SetActive(false);
+            }
+        }
+    }
+    private string FormatPlayerSummary(Player player)
+    {
+        Debug.Log(player.currentBet);
+        string result = player.hasWon ? "Won: " + player.wonAmount : "Lost";
+        return $"Player {player.name}: {result} : Current funds: {player.funds}";
+    }
+
+    public void HideEndRoundSummary()
+    {
+        summaryPanel.SetActive(false);
+    }
+
 
     public void SetBetSlider(float maxBet)
     {
@@ -77,9 +112,9 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.PlaceBet(betAmount);
     }
 
-    public void UpdateCurrentPlayerText(string playerName)
+    public void UpdateCurrentPlayerText(string playerText)
     {
-        currentPlayerText.text = "Current Player: " + playerName;
+        currentPlayerText.text = playerText;
     }
 
     public void UpdateHandValueText(int handValue)
@@ -90,5 +125,13 @@ public class UIManager : MonoBehaviour
     public void UpdateCurrentBetText(float currentBet)
     {
         currentBetText.text = "Current Bet: " + currentBet;
+    }
+    public void UpdateCurrentBetText(string currentBet)
+    {
+        currentBetText.text = currentBet;
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

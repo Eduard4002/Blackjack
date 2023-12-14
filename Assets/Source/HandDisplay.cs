@@ -82,6 +82,7 @@ public class HandDisplay : MonoBehaviour
         {
             if (cardGameObjectMap.TryGetValue(card, out GameObject cardObject))
             {
+                Debug.Log("Destroying card object");
                 Destroy(cardObject); // Destroy the card GameObject
             }
         }
