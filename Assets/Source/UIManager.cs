@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     public GameObject hitButton;
     public GameObject standButton;
     public GameObject doubleDownButton;
+    public GameObject splitButton;
 
 
 
@@ -150,9 +151,14 @@ public class UIManager : MonoBehaviour
         hitButton.SetActive(show);
         standButton.SetActive(show);
         ShowDoubleDownButton(show);
+        ShowSplitButton(show);
     }
     public void ShowDoubleDownButton(bool show)
     {
         doubleDownButton.SetActive(show);
+    }
+    public void ShowSplitButton(bool show)
+    {
+        splitButton.SetActive(show);
     }
 }
