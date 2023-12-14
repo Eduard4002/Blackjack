@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour
                 DealInitialCardsToAll();
                 break;
             case GameState.PlayerTurn:
-                Debug.Log("H to Hit and S to Stand");
                 StartPlayerTurn();
                 break;
             case GameState.DealerTurn:
@@ -75,7 +74,6 @@ public class GameManager : MonoBehaviour
     {
         //if (CurrentState != GameState.PlacingBets) return;
         players[currentPlayerIndex].PlaceBet(betAmount);
-        Debug.Log("Bet placed: " + betAmount);
         // Proceed to the next player or next state
         currentPlayerIndex++;
         if (currentPlayerIndex >= players.Count)
@@ -180,18 +178,6 @@ public class GameManager : MonoBehaviour
     }
     void StartPlayerTurn()
     {
-        for (int i = 0; i < players.Count; i++)
-        {
-            if (i == currentPlayerIndex)
-            {
-                HandDisplay.Instance.SetHandColor(players[i], CardColor.Active);
-            }
-            else
-            {
-                HandDisplay.Instance.SetHandColor(players[i], CardColor.Inactive);
-            }
-        }
-
         if (currentPlayerIndex >= players.Count)
         {
             // All players have had their turn, move to dealer's turn
@@ -200,14 +186,24 @@ public class GameManager : MonoBehaviour
         }
 
         Player currentPlayer = players[currentPlayerIndex];
+
+        // UI Updates
+        UIManager.Instance.UpdateCurrentPlayerText((currentPlayerIndex + 1).ToString());
+        UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
+        UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
+
+        // Color update for active/inactive players
+        for (int i = 0; i < players.Count; i++)
+        {
+            HandDisplay.Instance.SetHandColor(players[i], i == currentPlayerIndex ? CardColor.Active : CardColor.Inactive);
+        }
+
         // Check if currentPlayer's hand value is over 21
         if (currentPlayer.CalculateHandValue() > 21)
         {
             currentPlayerIndex++;
-            Debug.Log("Bust: " + currentPlayerIndex);
             StartPlayerTurn(); // Move to the next player
         }
-
     }
 
     public void PlayerHit()
@@ -217,17 +213,19 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        // Handle hit logic
         Card card = Deck.Instance.GetCard();
         players[currentPlayerIndex].TakeCard(card);
         HandDisplay.Instance.DisplayCard(card, players[currentPlayerIndex].transform.position, players[currentPlayerIndex].hand.Count);
 
+        UIManager.Instance.UpdateHandValueText(players[currentPlayerIndex].CalculateHandValue());
+
         if (players[currentPlayerIndex].CalculateHandValue() > 21)
         {
-            // Move to next player
+            // Player busts, move to the next player
             currentPlayerIndex++;
             StartPlayerTurn();
         }
-
     }
 
     public void PlayerStand()
@@ -237,10 +235,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Move to next player
+        // Player stands, move to the next player
         currentPlayerIndex++;
         StartPlayerTurn();
-
     }
 
     IEnumerator DealerTurn()

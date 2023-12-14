@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
     public Slider betSlider;
     public TextMeshProUGUI betAmountText;
+    public TextMeshProUGUI currentPlayerText;
+    public TextMeshProUGUI handValueText;
+    public TextMeshProUGUI currentBetText;
 
     public GameObject placeBetButton;
     public GameObject hitButton;
@@ -72,5 +75,20 @@ public class UIManager : MonoBehaviour
     {
         float betAmount = betSlider.value;
         GameManager.Instance.PlaceBet(betAmount);
+    }
+
+    public void UpdateCurrentPlayerText(string playerName)
+    {
+        currentPlayerText.text = "Current Player: " + playerName;
+    }
+
+    public void UpdateHandValueText(int handValue)
+    {
+        handValueText.text = "Hand Value: " + handValue;
+    }
+
+    public void UpdateCurrentBetText(float currentBet)
+    {
+        currentBetText.text = "Current Bet: " + currentBet;
     }
 }
