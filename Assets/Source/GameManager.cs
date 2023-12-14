@@ -57,10 +57,12 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.PlayerTurn:
                 UIManager.Instance.ShowPlayerInfo(true);
-
+                UIManager.Instance.ShowInputButtons(true);
                 StartPlayerTurn();
                 break;
             case GameState.DealerTurn:
+                UIManager.Instance.ShowInputButtons(false);
+
                 StartCoroutine(DealerTurn());
                 break;
             case GameState.EvaluatingWinner:
@@ -77,7 +79,7 @@ public class GameManager : MonoBehaviour
 
     public void PlaceBet(float betAmount)
     {
-        //if (CurrentState != GameState.PlacingBets) return;
+        if (CurrentState != GameState.PlacingBets) return;
         players[currentPlayerIndex].PlaceBet(betAmount);
         // Proceed to the next player or next state
         currentPlayerIndex++;
@@ -90,7 +92,30 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
         }
+    }
+    public void PlayerDoubleDown()
+    {
+        if (CurrentState != GameState.PlayerTurn)
+        {
+            return;
+        }
 
+        Player currentPlayer = players[currentPlayerIndex];
+        if (currentPlayer.CanDoubleDown())
+        {
+            currentPlayer.DoubleDown();
+            UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
+
+            // Deal one card and move to the next player
+            Card card = Deck.Instance.GetCard();
+            currentPlayer.TakeCard(card);
+            HandDisplay.Instance.DisplayCard(card, currentPlayer.transform.position, currentPlayer.hand.Count);
+            UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
+
+            // Proceed to the next player's turn
+            currentPlayerIndex++;
+            StartPlayerTurn();
+        }
     }
     void DealInitialCardsToAll()
     {
@@ -225,6 +250,7 @@ public class GameManager : MonoBehaviour
         HandDisplay.Instance.DisplayCard(card, players[currentPlayerIndex].transform.position, players[currentPlayerIndex].hand.Count);
 
         UIManager.Instance.UpdateHandValueText(players[currentPlayerIndex].CalculateHandValue());
+        UIManager.Instance.ShowDoubleDownButton(players[currentPlayerIndex].CanDoubleDown());
 
         if (players[currentPlayerIndex].CalculateHandValue() > 21)
         {

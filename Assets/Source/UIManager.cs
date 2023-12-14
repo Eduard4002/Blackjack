@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     public GameObject placeBetButton;
     public GameObject hitButton;
     public GameObject standButton;
+    public GameObject doubleDownButton;
 
 
 
@@ -33,15 +34,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OnHitButtonPressed()
-    {
-        GameManager.Instance.PlayerHit();
-    }
+    public void OnHitButtonPressed() => GameManager.Instance.PlayerHit();
+    public void OnStandButtonPressed() => GameManager.Instance.PlayerStand();
+    public void OnDoubleDownButtonPressed() => GameManager.Instance.PlayerDoubleDown();
 
-    public void OnStandButtonPressed()
-    {
-        GameManager.Instance.PlayerStand();
-    }
     public void ShowEndRoundSummary(List<Player> players)
     {
         summaryPanel.SetActive(true);
@@ -63,8 +59,8 @@ public class UIManager : MonoBehaviour
     private string FormatPlayerSummary(Player player)
     {
         Debug.Log(player.currentBet);
-        string result = player.hasWon ? "Won: " + player.wonAmount : "Lost";
-        return $"Player {player.name}: {result} : Current funds: {player.funds}";
+        string result = player.hasWon ? "Won " + player.wonAmount + " $" : "Lost";
+        return $"Player {player.name}: {result} : Current funds: {player.funds} $";
     }
 
     public void HideEndRoundSummary()
@@ -77,8 +73,9 @@ public class UIManager : MonoBehaviour
     {
         betSlider.gameObject.SetActive(true);
         placeBetButton.SetActive(true);
-        hitButton.SetActive(false);
-        standButton.SetActive(false);
+        betAmountText.gameObject.SetActive(true);
+
+        ShowInputButtons(false);
         betSlider.maxValue = maxBet;
         betSlider.value = betSlider.minValue; // Reset to minimum value or a default value
         UpdateBetAmountText(betSlider.value);
@@ -88,8 +85,8 @@ public class UIManager : MonoBehaviour
     {
         betSlider.gameObject.SetActive(false);
         placeBetButton.SetActive(false);
-        hitButton.SetActive(true);
-        standButton.SetActive(true);
+        betAmountText.gameObject.SetActive(false);
+        ShowInputButtons(true);
 
     }
 
@@ -109,7 +106,7 @@ public class UIManager : MonoBehaviour
     {
         if (betAmountText != null)
         {
-            betAmountText.text = "Bet: " + value;
+            betAmountText.text = "Bet: " + value + " $";
         }
     }
     public void OnPlaceBetButtonClicked()
@@ -139,5 +136,15 @@ public class UIManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+    public void ShowInputButtons(bool show)
+    {
+        hitButton.SetActive(show);
+        standButton.SetActive(show);
+        ShowDoubleDownButton(show);
+    }
+    public void ShowDoubleDownButton(bool show)
+    {
+        doubleDownButton.SetActive(show);
     }
 }

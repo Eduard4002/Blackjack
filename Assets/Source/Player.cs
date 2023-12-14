@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
     {
         currentBet = 0;
         hasWon = false;
+        wonAmount = 0;
+
         ResetHand();
     }
 
@@ -101,6 +103,21 @@ public class Player : MonoBehaviour
         }
 
         return value;
+    }
+
+    public bool CanDoubleDown()
+    {
+        // Usually, double down is allowed only if the player has exactly 2 cards
+        return hand.Count == 2 && funds >= currentBet * 2;
+    }
+
+    public void DoubleDown()
+    {
+        if (CanDoubleDown())
+        {
+            funds -= currentBet; // Deduct the additional bet
+            currentBet *= 2;
+        }
     }
 
 }
