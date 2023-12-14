@@ -7,11 +7,14 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
     public Slider betSlider;
+    [Header("Texts")]
     public TextMeshProUGUI betAmountText;
+    public TextMeshProUGUI currentPlayerBetText;
     public TextMeshProUGUI currentPlayerText;
     public TextMeshProUGUI handValueText;
     public TextMeshProUGUI currentBetText;
 
+    [Header("Buttons")]
     public GameObject placeBetButton;
     public GameObject hitButton;
     public GameObject standButton;
@@ -19,7 +22,9 @@ public class UIManager : MonoBehaviour
 
 
 
+    [Header("Panels")]
     public GameObject summaryPanel;
+    public GameObject betPanel;
     public TextMeshProUGUI[] playerSummaryTexts; // Assuming 3 text objects
     private void Awake()
     {
@@ -69,24 +74,27 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void SetBetSlider(float maxBet)
+    public void SetBetSlider(float maxBet, string playerName)
     {
-        betSlider.gameObject.SetActive(true);
-        placeBetButton.SetActive(true);
-        betAmountText.gameObject.SetActive(true);
+        betPanel.SetActive(true);
+        //betSlider.gameObject.SetActive(true);
+        //placeBetButton.SetActive(true);
+        //betAmountText.gameObject.SetActive(true);
 
-        ShowInputButtons(false);
+        //ShowInputButtons(false);
         betSlider.maxValue = maxBet;
         betSlider.value = betSlider.minValue; // Reset to minimum value or a default value
         UpdateBetAmountText(betSlider.value);
+        currentPlayerBetText.text = "Player: " + playerName;
     }
 
     public void HideBetSlider()
     {
-        betSlider.gameObject.SetActive(false);
-        placeBetButton.SetActive(false);
-        betAmountText.gameObject.SetActive(false);
-        ShowInputButtons(true);
+        betPanel.SetActive(false);
+        //betSlider.gameObject.SetActive(false);
+        //placeBetButton.SetActive(false);
+        //betAmountText.gameObject.SetActive(false);
+        //ShowInputButtons(true);
 
     }
 

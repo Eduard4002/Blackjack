@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
             case GameState.PlacingBets:
                 //Activate the slider inside the UIManager
                 UIManager.Instance.ShowPlayerInfo(false);
-                UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+                UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
                 break;
             case GameState.DealingInitialCards:
                 DealInitialCardsToAll();
@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+            UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
         }
     }
     public void PlayerDoubleDown()
@@ -226,7 +226,7 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.UpdateCurrentPlayerText("Player: " + players[currentPlayerIndex].name);
         UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
         UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
-
+        UIManager.Instance.ShowDoubleDownButton(currentPlayer.CanDoubleDown());
 
 
         // Check if currentPlayer's hand value is over 21
@@ -323,7 +323,7 @@ public class GameManager : MonoBehaviour
         // Reset the state
         currentPlayerIndex = 0;
 
-        UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds);
+        UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
 
 
         SetState(GameState.PlacingBets);
