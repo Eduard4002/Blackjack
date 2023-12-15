@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
 
+    bool isPlayingSplitHand = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -93,30 +95,7 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
         }
     }
-    public void PlayerDoubleDown()
-    {
-        if (CurrentState != GameState.PlayerTurn)
-        {
-            return;
-        }
 
-        Player currentPlayer = players[currentPlayerIndex];
-        if (currentPlayer.CanDoubleDown())
-        {
-            currentPlayer.DoubleDown();
-            UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
-
-            // Deal one card and move to the next player
-            Card card = Deck.Instance.GetCard();
-            currentPlayer.TakeCard(card);
-            HandDisplay.Instance.DisplayCard(card, currentPlayer.transform.position, currentPlayer.hand.Count);
-            UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
-
-            // Proceed to the next player's turn
-            currentPlayerIndex++;
-            StartPlayerTurn();
-        }
-    }
     void DealInitialCardsToAll()
     {
         foreach (var player in players)
@@ -236,7 +215,7 @@ public class GameManager : MonoBehaviour
             StartPlayerTurn(); // Move to the next player
         }
     }
-
+    /*
     public void PlayerHit()
     {
         if (CurrentState != GameState.PlayerTurn)
@@ -259,8 +238,77 @@ public class GameManager : MonoBehaviour
             currentPlayerIndex++;
             StartPlayerTurn();
         }
-    }
+    }*/
+    public void PlayerHit()
+    {
+        if (CurrentState != GameState.PlayerTurn)
+        {
+            return;
+        }
 
+        Player currentPlayer = players[currentPlayerIndex];
+        List<Card> targetHand = isPlayingSplitHand ? currentPlayer.splitHand : currentPlayer.hand;
+        Card card = Deck.Instance.GetCard();
+        targetHand.Add(card);
+
+        Vector3 handPosition = isPlayingSplitHand ? currentPlayer.splitHandPosition : currentPlayer.transform.position;
+
+
+        HandDisplay.Instance.DisplayCard(card, handPosition, targetHand.Count, false, isPlayingSplitHand);
+        UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(targetHand));
+        Debug.Log("Is the player playing a split hand? " + isPlayingSplitHand);
+        if (currentPlayer.CalculateHandValueForHand(targetHand) > 21)
+        {
+            if (isPlayingSplitHand)
+            {
+                // Finished with the split hand, move to the next player
+                currentPlayerIndex++;
+                StartPlayerTurn();
+            }
+            else if (currentPlayer.hasSplit)
+            {
+                // Move to the split hand
+                isPlayingSplitHand = true;
+                HandDisplay.Instance.SetHandColor(currentPlayer, CardColor.Active); // Set split hand to active
+            }
+            else
+            {
+                // No split hand, move to the next player
+                currentPlayerIndex++;
+                StartPlayerTurn();
+            }
+        }
+    }
+    public void PlayerStand()
+    {
+        if (CurrentState != GameState.PlayerTurn)
+        {
+            return;
+        }
+
+        Player currentPlayer = players[currentPlayerIndex];
+
+        if (isPlayingSplitHand)
+        {
+            // Finished playing the split hand, move to the next player
+            isPlayingSplitHand = false;
+            currentPlayerIndex++;
+            StartPlayerTurn();
+        }
+        else if (currentPlayer.hasSplit)
+        {
+            // Move to the split hand
+            isPlayingSplitHand = true;
+            HandDisplay.Instance.SetHandColor(currentPlayer, CardColor.Active); // Set split hand to active
+        }
+        else
+        {
+            // No split hand, move to the next player
+            currentPlayerIndex++;
+            StartPlayerTurn();
+        }
+    }
+    /*
     public void PlayerStand()
     {
         if (CurrentState != GameState.PlayerTurn)
@@ -271,6 +319,49 @@ public class GameManager : MonoBehaviour
         // Player stands, move to the next player
         currentPlayerIndex++;
         StartPlayerTurn();
+    }*/
+    public void PlayerSplit()
+    {
+        if (CurrentState != GameState.PlayerTurn)
+        {
+            return;
+        }
+
+        Player currentPlayer = players[currentPlayerIndex];
+        if (currentPlayer.CanSplit())
+        {
+            currentPlayer.Split();
+            Card splitCard = currentPlayer.splitHand[0];
+
+            //This wont work, there is no split hand position inside the player script
+            HandDisplay.Instance.DisplayCard(splitCard, currentPlayer.splitHandPosition, 0, false, true);
+
+            HandDisplay.Instance.SetHandColor(currentPlayer, CardColor.Inactive); // Set main hand to inactive
+        }
+    }
+    public void PlayerDoubleDown()
+    {
+        if (CurrentState != GameState.PlayerTurn)
+        {
+            return;
+        }
+
+        Player currentPlayer = players[currentPlayerIndex];
+        if (currentPlayer.CanDoubleDown())
+        {
+            currentPlayer.DoubleDown();
+            UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
+
+            // Deal one card and move to the next player
+            Card card = Deck.Instance.GetCard();
+            currentPlayer.TakeCard(card);
+            HandDisplay.Instance.DisplayCard(card, currentPlayer.transform.position, currentPlayer.hand.Count);
+            UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
+
+            // Proceed to the next player's turn
+            currentPlayerIndex++;
+            StartPlayerTurn();
+        }
     }
 
     IEnumerator DealerTurn()
@@ -322,11 +413,12 @@ public class GameManager : MonoBehaviour
 
         // Reset the state
         currentPlayerIndex = 0;
+        SetState(GameState.DealingInitialCards);
 
-        UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
+
+        //UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
 
 
-        SetState(GameState.PlacingBets);
     }
 }
 public enum GameState

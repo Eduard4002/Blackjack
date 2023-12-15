@@ -36,6 +36,11 @@ public class Deck : MonoBehaviour
 
     public void ShuffleCards()
     {
+        //Remove isFlipped from all cards
+        foreach (Card card in cards)
+        {
+            card.isFlipped = false;
+        }
         //Shuffle the cards
         System.Random rng = new System.Random();
         int n = cards.Count;
@@ -43,6 +48,7 @@ public class Deck : MonoBehaviour
         {
             n--;
             int k = rng.Next(n + 1);
+
             Card value = cards[k];
             cards[k] = cards[n];
             cards[n] = value;

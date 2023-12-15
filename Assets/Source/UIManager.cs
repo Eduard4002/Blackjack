@@ -43,6 +43,7 @@ public class UIManager : MonoBehaviour
     public void OnHitButtonPressed() => GameManager.Instance.PlayerHit();
     public void OnStandButtonPressed() => GameManager.Instance.PlayerStand();
     public void OnDoubleDownButtonPressed() => GameManager.Instance.PlayerDoubleDown();
+    public void OnSplitButtonPressed() => GameManager.Instance.PlayerSplit();
 
     public void ShowEndRoundSummary(List<Player> players)
     {

@@ -29,21 +29,23 @@ public class HandDisplay : MonoBehaviour
             Destroy(gameObject); // Ensures there's only one instance
         }
     }
-
-    public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false)
+    /*
+    public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
     {
         // Calculate position based on handPosition and number of cards
         //Vector3 cardPosition = new Vector3(handPosition.x, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
-        float verticalSpacing = isDealer ? 0 : 0.1f; // No vertical offset for dealer
+        float verticalSpacing = isDealer ? 0 : 0.5f; // No vertical offset for dealer
+        float horizontalOffset = isSplitHand ? 2.0f : 0; // Horizontal offset for split hand
+
 
         Vector3 cardPosition;
         if (isDealer)
         {
-            cardPosition = new Vector3(handPosition.x, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
+            cardPosition = new Vector3(handPosition.x + horizontalOffset, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
         }
         else
         {
-            cardPosition = new Vector3(handPosition.x + cardSpacing * cardCount, handPosition.y + cardSpacing * cardCount, -cardCount);
+            cardPosition = new Vector3(handPosition.x + cardSpacing * cardCount + horizontalOffset, handPosition.y + verticalSpacing * cardCount, -cardCount);
         }
 
         GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
@@ -61,7 +63,81 @@ public class HandDisplay : MonoBehaviour
         }
         // Add the card and GameObject association to the dictionary
         cardGameObjectMap[card] = newCard;
+    }*/
+    /* public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
+     {
+         float horizontalSpacing = isDealer ? 0.5f : 0.5f; // Adjust as needed
+         float verticalSpacing = isDealer ? 0 : 0.3f; // No vertical offset for dealer
+
+         // Calculate the horizontal offset for split hand
+         float splitHandOffset = isSplitHand ? 4f : 0; // Horizontal offset to separate the split hand
+
+         Vector3 cardPosition = new Vector3(handPosition.x + splitHandOffset + horizontalSpacing * (isSplitHand ? cardCount - 1 : cardCount),
+                                            handPosition.y + verticalSpacing * cardCount,
+                                            -cardCount);
+
+         GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
+
+
+         if (card.isFlipped)
+         {
+             newCard.GetComponent<SpriteRenderer>().sprite = card.cardBack;
+             newCard.GetComponent<SpriteRenderer>().color = backColor;
+         }
+         else
+         {
+             newCard.GetComponent<SpriteRenderer>().sprite = card.cardImage;
+             newCard.GetComponent<SpriteRenderer>().color = activeColor;
+         }
+         // Add the card and GameObject association to the dictionary
+         cardGameObjectMap[card] = newCard;
+     }*/
+    public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
+    {
+        // Check if the card already has a GameObject and needs to be repositioned
+        if (cardGameObjectMap.TryGetValue(card, out GameObject existingCardObject))
+        {
+            // Reposition the existing card GameObject
+            existingCardObject.transform.position = CalculateCardPosition(handPosition, cardCount, isDealer, isSplitHand);
+        }
+        else
+        {
+            // Instantiate and position the new card GameObject
+            Vector3 cardPosition = CalculateCardPosition(handPosition, cardCount, isDealer, isSplitHand);
+            GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
+            if (card.isFlipped)
+            {
+                newCard.GetComponent<SpriteRenderer>().sprite = card.cardBack;
+                newCard.GetComponent<SpriteRenderer>().color = backColor;
+            }
+            else
+            {
+                newCard.GetComponent<SpriteRenderer>().sprite = card.cardImage;
+                newCard.GetComponent<SpriteRenderer>().color = activeColor;
+            }
+
+            cardGameObjectMap[card] = newCard;
+        }
     }
+
+    private Vector3 CalculateCardPosition(Vector3 handPosition, int cardCount, bool isDealer, bool isSplitHand)
+    {
+        float horizontalSpacing = isDealer ? 0.5f : 0.5f; // Adjust as needed
+        float verticalSpacing = isDealer ? 0 : 0.3f; // No vertical offset for dealer
+
+        // Calculate the horizontal offset for split hand
+        float splitHandOffset = isSplitHand ? 4f : 0; // Horizontal offset to separate the split hand
+
+        // Adjust the y position for split hands
+        float splitHandYOffset = isSplitHand ? -0.3f : 0; // Adjust as needed
+
+        return new Vector3(handPosition.x + splitHandOffset + horizontalSpacing * cardCount,
+                           handPosition.y + splitHandYOffset + verticalSpacing * cardCount,
+                           -cardCount);
+    }
+
+
+
     public void UpdateCardSprite(Card card)
     {
         if (cardGameObjectMap.TryGetValue(card, out GameObject cardObject))
