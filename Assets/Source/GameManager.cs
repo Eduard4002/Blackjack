@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
             user.TakeCard(card);
 
             // Here, you would also update the UI to show the player's hand
-            HandDisplay.Instance.DisplayCard(card, user.transform.position, user.hand.Count);
+            HandDisplay.Instance.DisplayCard(card, user.transform.position, user.hand.Count, isDealer);
 
         }
     }
@@ -289,7 +289,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1); // Wait time between hits for better readability
             Card newCard = Deck.Instance.GetCard();
             dealer.TakeCard(newCard);
-            HandDisplay.Instance.DisplayCard(newCard, dealer.transform.position, dealer.hand.Count);
+            HandDisplay.Instance.DisplayCard(newCard, dealer.transform.position, dealer.hand.Count, true);
             UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValue());
 
         }

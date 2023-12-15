@@ -30,11 +30,21 @@ public class HandDisplay : MonoBehaviour
         }
     }
 
-    public void DisplayCard(Card card, Vector3 handPosition, int cardCount)
+    public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false)
     {
         // Calculate position based on handPosition and number of cards
         //Vector3 cardPosition = new Vector3(handPosition.x, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
-        Vector3 cardPosition = new Vector3(handPosition.x + cardSpacing * cardCount, handPosition.y + cardSpacing * cardCount, -cardCount);
+        float verticalSpacing = isDealer ? 0 : 0.1f; // No vertical offset for dealer
+
+        Vector3 cardPosition;
+        if (isDealer)
+        {
+            cardPosition = new Vector3(handPosition.x, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
+        }
+        else
+        {
+            cardPosition = new Vector3(handPosition.x + cardSpacing * cardCount, handPosition.y + cardSpacing * cardCount, -cardCount);
+        }
 
         GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
 
