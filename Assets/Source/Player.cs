@@ -148,11 +148,7 @@ public class Player : MonoBehaviour
         return value;
     }
 
-    public bool CanDoubleDown()
-    {
-        // Usually, double down is allowed only if the player has exactly 2 cards
-        return hand.Count == 2 && funds >= currentBet * 2;
-    }
+
 
     public void DoubleDown()
     {
@@ -164,10 +160,10 @@ public class Player : MonoBehaviour
     }
     public void Split()
     {
-        Debug.Log("Player wants to split");
         if (CanSplit())
         {
-            Debug.Log("Splitting");
+            funds -= currentBet; // Deduct the additional bet
+            currentBet *= 2;
             hasSplit = true;
             splitHand.Add(hand[1]); // Move the second card to the split hand
             hand.RemoveAt(1); // Remove the second card from the original hand
@@ -178,6 +174,11 @@ public class Player : MonoBehaviour
     {
         // Can split if the player has exactly 2 cards of the same rank
         return hand.Count == 2 && hand[0].value == hand[1].value;
+    }
+    public bool CanDoubleDown()
+    {
+        // Usually, double down is allowed only if the player has exactly 2 cards and has not split
+        return hand.Count == 2 && funds >= currentBet * 2 && !hasSplit;
     }
 
 }

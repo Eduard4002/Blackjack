@@ -97,13 +97,16 @@ public class HandDisplay : MonoBehaviour
         // Check if the card already has a GameObject and needs to be repositioned
         if (cardGameObjectMap.TryGetValue(card, out GameObject existingCardObject))
         {
+            Debug.Log("Repositioning card object");
+            Debug.Log("Hand pos: " + handPosition);
             // Reposition the existing card GameObject
-            existingCardObject.transform.position = CalculateCardPosition(handPosition, cardCount, isDealer, isSplitHand);
+            existingCardObject.transform.position = handPosition;
         }
         else
         {
             // Instantiate and position the new card GameObject
             Vector3 cardPosition = CalculateCardPosition(handPosition, cardCount, isDealer, isSplitHand);
+            Debug.Log("Card pos: " + cardPosition);
             GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
             if (card.isFlipped)
             {
@@ -131,8 +134,8 @@ public class HandDisplay : MonoBehaviour
         // Adjust the y position for split hands
         float splitHandYOffset = isSplitHand ? -0.3f : 0; // Adjust as needed
 
-        return new Vector3(handPosition.x + splitHandOffset + horizontalSpacing * cardCount,
-                           handPosition.y + splitHandYOffset + verticalSpacing * cardCount,
+        return new Vector3(handPosition.x + horizontalSpacing * (cardCount - 1),
+                           handPosition.y + verticalSpacing * (cardCount - 1),
                            -cardCount);
     }
 
@@ -152,9 +155,9 @@ public class HandDisplay : MonoBehaviour
             Debug.LogError("Card GameObject not found in map.");
         }
     }
-    public void SetHandColor(Player player, CardColor color)
+    public void SetHandColor(List<Card> hand, CardColor color)
     {
-        foreach (Card card in player.hand)
+        foreach (Card card in hand)
         {
             if (cardGameObjectMap.TryGetValue(card, out GameObject cardObject))
             {

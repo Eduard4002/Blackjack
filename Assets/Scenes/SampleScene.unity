@@ -556,7 +556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splitHand: []
-  splitHandOffset: {x: 2, y: 0, z: 0}
+  splitHandOffset: {x: 2.5, y: 0, z: 0}
   splitHandPosition: {x: 0, y: 0, z: 0}
   hasSplit: 0
   handValue: 0
@@ -574,7 +574,7 @@ Transform:
   m_GameObject: {fileID: 107314544}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4, z: 0}
+  m_LocalPosition: {x: -1, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1046,8 +1046,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -70}
-  m_SizeDelta: {x: 1124.1221, y: 50}
+  m_AnchoredPosition: {x: 4, y: -50.262497}
+  m_SizeDelta: {x: 874.3721, y: 37.5042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &435498612
 MonoBehaviour:
@@ -1096,8 +1096,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 27.76
+  m_fontSizeBase: 27.76
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1694,7 +1694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splitHand: []
-  splitHandOffset: {x: 2, y: 0, z: 0}
+  splitHandOffset: {x: 2.5, y: 0, z: 0}
   splitHandPosition: {x: 0, y: 0, z: 0}
   hasSplit: 0
   handValue: 0
@@ -1712,7 +1712,7 @@ Transform:
   m_GameObject: {fileID: 595350253}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: -4, z: 0}
+  m_LocalPosition: {x: 5, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3730,8 +3730,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1124.1221, y: 50}
+  m_AnchoredPosition: {x: 4, y: 2.243513}
+  m_SizeDelta: {x: 874.3721, y: 37.5042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1849404725
 MonoBehaviour:
@@ -3780,8 +3780,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 27.76
+  m_fontSizeBase: 27.76
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4073,8 +4073,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 77}
-  m_SizeDelta: {x: 1124.1221, y: 50}
+  m_AnchoredPosition: {x: 4, y: 60}
+  m_SizeDelta: {x: 874.3721, y: 37.5042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1896312809
 MonoBehaviour:
@@ -4123,8 +4123,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 27.76
+  m_fontSizeBase: 27.76
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4325,7 +4325,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1923249470
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4604,7 +4604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splitHand: []
-  splitHandOffset: {x: 2, y: 0, z: 0}
+  splitHandOffset: {x: 2.5, y: 0, z: 0}
   splitHandPosition: {x: 0, y: 0, z: 0}
   hasSplit: 0
   handValue: 0
@@ -4622,7 +4622,7 @@ Transform:
   m_GameObject: {fileID: 1995122625}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -4, z: 0}
+  m_LocalPosition: {x: -7, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

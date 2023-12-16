@@ -190,7 +190,8 @@ public class GameManager : MonoBehaviour
         // Color update for active/inactive players
         for (int i = 0; i < players.Count; i++)
         {
-            HandDisplay.Instance.SetHandColor(players[i], i == currentPlayerIndex ? CardColor.Active : CardColor.Inactive);
+            HandDisplay.Instance.SetHandColor(players[i].hand, i == currentPlayerIndex ? CardColor.Active : CardColor.Inactive);
+            HandDisplay.Instance.SetHandColor(players[i].splitHand, CardColor.Inactive);
         }
         if (currentPlayerIndex >= players.Count)
         {
@@ -206,6 +207,7 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
         UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
         UIManager.Instance.ShowDoubleDownButton(currentPlayer.CanDoubleDown());
+        UIManager.Instance.ShowSplitButton(currentPlayer.CanSplit());
 
 
         // Check if currentPlayer's hand value is over 21
@@ -259,24 +261,8 @@ public class GameManager : MonoBehaviour
         Debug.Log("Is the player playing a split hand? " + isPlayingSplitHand);
         if (currentPlayer.CalculateHandValueForHand(targetHand) > 21)
         {
-            if (isPlayingSplitHand)
-            {
-                // Finished with the split hand, move to the next player
-                currentPlayerIndex++;
-                StartPlayerTurn();
-            }
-            else if (currentPlayer.hasSplit)
-            {
-                // Move to the split hand
-                isPlayingSplitHand = true;
-                HandDisplay.Instance.SetHandColor(currentPlayer, CardColor.Active); // Set split hand to active
-            }
-            else
-            {
-                // No split hand, move to the next player
-                currentPlayerIndex++;
-                StartPlayerTurn();
-            }
+            // Player busts, move to the next player
+            PlayerStand();
         }
     }
     public void PlayerStand()
@@ -299,7 +285,9 @@ public class GameManager : MonoBehaviour
         {
             // Move to the split hand
             isPlayingSplitHand = true;
-            HandDisplay.Instance.SetHandColor(currentPlayer, CardColor.Active); // Set split hand to active
+            HandDisplay.Instance.SetHandColor(currentPlayer.hand, CardColor.Inactive); // Set main hand to inactive
+
+            HandDisplay.Instance.SetHandColor(currentPlayer.splitHand, CardColor.Active); // Set split hand to active
         }
         else
         {
@@ -326,6 +314,9 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
+        //Hide double down and split buttons
+        UIManager.Instance.ShowDoubleDownButton(false);
+        UIManager.Instance.ShowSplitButton(false);
 
         Player currentPlayer = players[currentPlayerIndex];
         if (currentPlayer.CanSplit())
@@ -333,10 +324,11 @@ public class GameManager : MonoBehaviour
             currentPlayer.Split();
             Card splitCard = currentPlayer.splitHand[0];
 
-            //This wont work, there is no split hand position inside the player script
+            //Reposition the cards
             HandDisplay.Instance.DisplayCard(splitCard, currentPlayer.splitHandPosition, 0, false, true);
 
-            HandDisplay.Instance.SetHandColor(currentPlayer, CardColor.Inactive); // Set main hand to inactive
+            HandDisplay.Instance.SetHandColor(currentPlayer.hand, CardColor.Active); // Set main hand to active
+            HandDisplay.Instance.SetHandColor(currentPlayer.splitHand, CardColor.Inactive); // Set split hand to inactive
         }
     }
     public void PlayerDoubleDown()
@@ -398,6 +390,7 @@ public class GameManager : MonoBehaviour
         {
 
             player.Reset();
+
 
         }
         HandDisplay.Instance.ClearAllHands();
