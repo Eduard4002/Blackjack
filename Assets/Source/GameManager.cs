@@ -50,15 +50,21 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.PlacingBets:
+                foreach (Player player in players)
+                {
+                    Debug.Log("YES");
+                    player.ShowCanvas(false);
+                }
+                UIManager.Instance.ShowInputButtons(false);
                 //Activate the slider inside the UIManager
-                UIManager.Instance.ShowPlayerInfo(false);
                 UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
                 break;
             case GameState.DealingInitialCards:
+                UIManager.Instance.ShowInputButtons(true);
+
                 DealInitialCardsToAll();
                 break;
             case GameState.PlayerTurn:
-                UIManager.Instance.ShowPlayerInfo(true);
                 UIManager.Instance.ShowInputButtons(true);
                 StartPlayerTurn();
                 break;
@@ -100,9 +106,38 @@ public class GameManager : MonoBehaviour
     {
         foreach (var player in players)
         {
+            player.ShowCanvas(true);
+
             DealInitialCards(player);
+            int handValue = player.CalculateHandValueForHand(player.hand);
+            string showOnCanvas;
+
+            if (handValue == 21)
+            {
+                showOnCanvas = "BLACKJACK";
+                player.DisplayOnCanvas(showOnCanvas, new Color(1.0f, 1.0f, 0.0f, 1.0f));
+
+            }
+            else if (handValue > 21)
+            {
+                showOnCanvas = "BUST";
+                player.DisplayOnCanvas(showOnCanvas, Color.red);
+
+            }
+            else
+            {
+                showOnCanvas = handValue.ToString() + " \n" + player.currentBet.ToString() + "$";
+
+                player.DisplayOnCanvas(showOnCanvas, new Color(1.0f, 1.0f, 0.0f, 1.0f));
+
+            }
+            //string showOnCanvas = player.CalculateHandValueForHand(player.hand).ToString() + " \n" + player.currentBet.ToString() + "$";
         }
         DealInitialCards(dealer, true);
+        if (dealer.CalculateHandValueForHand(dealer.hand) == 21)
+        {
+            SetState(GameState.EvaluatingWinner);
+        }
         currentPlayerIndex = 0; // Reset to first player
         SetState(GameState.PlayerTurn); // Start player turns
     }
@@ -187,6 +222,7 @@ public class GameManager : MonoBehaviour
     }
     void StartPlayerTurn()
     {
+
         // Color update for active/inactive players
         for (int i = 0; i < players.Count; i++)
         {
@@ -200,12 +236,16 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+
+
         Player currentPlayer = players[currentPlayerIndex];
 
+        // Check if the player has blackjack
+        if (currentPlayer.CalculateHandValueForHand(currentPlayer.hand) == 21)
+        {
+            PlayerStand();
+        }
         // UI Updates
-        UIManager.Instance.UpdateCurrentPlayerText("Player: " + players[currentPlayerIndex].name);
-        UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(currentPlayer.hand));
-        UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
         UIManager.Instance.ShowDoubleDownButton(currentPlayer.CanDoubleDown());
         UIManager.Instance.ShowSplitButton(currentPlayer.CanSplit());
 
@@ -213,7 +253,7 @@ public class GameManager : MonoBehaviour
         // Check if currentPlayer's hand value is over 21
         if (currentPlayer.CalculateHandValueForHand(currentPlayer.hand) > 21)
         {
-            currentPlayer.DisplayBust();
+            currentPlayer.DisplayOnCanvas("BUST", Color.red);
 
             currentPlayerIndex++;
             StartPlayerTurn(); // Move to the next player
@@ -237,12 +277,18 @@ public class GameManager : MonoBehaviour
 
         HandDisplay.Instance.DisplayCard(card, handPosition, targetHand.Count, false, isPlayingSplitHand);
         UIManager.Instance.ShowDoubleDownButton(false);
-        UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(targetHand));
+
+        string showOnCanvas = currentPlayer.CalculateHandValueForHand(targetHand).ToString() + " \n" + currentPlayer.currentBet.ToString() + "$";
+        currentPlayer.DisplayOnCanvas(showOnCanvas, new Color(1.0f, 1.0f, 0.0f, 1.0f));
         Debug.Log("Is the player playing a split hand? " + isPlayingSplitHand);
         if (currentPlayer.CalculateHandValueForHand(targetHand) > 21)
         {
-            currentPlayer.DisplayBust();
+            currentPlayer.DisplayOnCanvas("BUST", Color.red);
             // Player busts, move to the next player
+            PlayerStand();
+        }
+        else if (currentPlayer.CalculateHandValueForHand(targetHand) == 21)
+        {
             PlayerStand();
         }
     }
@@ -312,13 +358,13 @@ public class GameManager : MonoBehaviour
         if (currentPlayer.CanDoubleDown())
         {
             currentPlayer.DoubleDown();
-            UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
 
             // Deal one card and move to the next player
             Card card = Deck.Instance.GetCard();
             currentPlayer.TakeCard(card);
             HandDisplay.Instance.DisplayCard(card, currentPlayer.transform.position, currentPlayer.hand.Count);
-            UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(currentPlayer.hand));
+            string showOnCanvas = currentPlayer.CalculateHandValueForHand(currentPlayer.hand).ToString() + " \n" + currentPlayer.currentBet.ToString() + "$";
+            currentPlayer.DisplayOnCanvas(showOnCanvas, new Color(1.0f, 1.0f, 0.0f, 1.0f));
 
             // Proceed to the next player's turn
             currentPlayerIndex++;
@@ -332,9 +378,8 @@ public class GameManager : MonoBehaviour
         dealer.RevealHiddenCard();
         HandDisplay.Instance.UpdateCardSprite(dealer.GetHiddenCard());
 
-        UIManager.Instance.UpdateCurrentPlayerText("Dealer");
-        UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValueForHand(dealer.hand));
-        UIManager.Instance.UpdateCurrentBetText(" ");
+        dealer.DisplayOnCanvas(dealer.CalculateHandValueForHand(dealer.hand).ToString(), new Color(1.0f, 1.0f, 0.0f, 1.0f));
+
 
         // Keep hitting until the dealer's hand value reaches or exceeds the threshold
         while (dealer.CalculateHandValueForHand(dealer.hand) < dealerStandValue)
@@ -343,12 +388,20 @@ public class GameManager : MonoBehaviour
             Card newCard = Deck.Instance.GetCard();
             dealer.TakeCard(newCard);
             HandDisplay.Instance.DisplayCard(newCard, dealer.transform.position, dealer.hand.Count, true);
-            UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValueForHand(dealer.hand));
+            //UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValueForHand(dealer.hand));
+            dealer.DisplayOnCanvas(dealer.CalculateHandValueForHand(dealer.hand).ToString(), new Color(1.0f, 1.0f, 0.0f, 1.0f));
 
+        }
+        if (dealer.CalculateHandValueForHand(dealer.hand) > dealerStandValue)
+        {
+            dealer.DisplayOnCanvas("BUST", Color.red);
         }
 
         // Wait for 3 seconds after the dealer finishes their turn
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1.5f);
+
+        dealer.DisplayOnCanvas("", new Color(1.0f, 1.0f, 0.0f, 1.0f));
+
 
         // Transition to evaluating winner
         SetState(GameState.EvaluatingWinner);
@@ -377,7 +430,7 @@ public class GameManager : MonoBehaviour
         currentPlayerIndex = 0;
 
 
-        SetState(GameState.DealingInitialCards);
+        SetState(GameState.PlacingBets);
 
 
 

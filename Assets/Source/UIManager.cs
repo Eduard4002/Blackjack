@@ -10,9 +10,7 @@ public class UIManager : MonoBehaviour
     [Header("Texts")]
     public TextMeshProUGUI betAmountText;
     public TextMeshProUGUI currentPlayerBetText;
-    public TextMeshProUGUI currentPlayerText;
-    public TextMeshProUGUI handValueText;
-    public TextMeshProUGUI currentBetText;
+
 
     [Header("Buttons")]
     public GameObject placeBetButton;
@@ -104,12 +102,7 @@ public class UIManager : MonoBehaviour
     {
         UpdateBetAmountText(value);
     }
-    public void ShowPlayerInfo(bool show)
-    {
-        currentPlayerText.gameObject.SetActive(show);
-        handValueText.gameObject.SetActive(show);
-        currentBetText.gameObject.SetActive(show);
-    }
+
 
 
     private void UpdateBetAmountText(float value)
@@ -125,24 +118,7 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.PlaceBet(betAmount);
     }
 
-    public void UpdateCurrentPlayerText(string playerText)
-    {
-        currentPlayerText.text = playerText;
-    }
 
-    public void UpdateHandValueText(int handValue)
-    {
-        handValueText.text = "Hand Value: " + handValue;
-    }
-
-    public void UpdateCurrentBetText(float currentBet)
-    {
-        currentBetText.text = "Current Bet: " + currentBet;
-    }
-    public void UpdateCurrentBetText(string currentBet)
-    {
-        currentBetText.text = currentBet;
-    }
     public void QuitGame()
     {
         Application.Quit();

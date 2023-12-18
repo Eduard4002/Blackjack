@@ -26,18 +26,22 @@ public class Player : MonoBehaviour
 
 
     private Canvas playerCanvas;
-    private TextMeshProUGUI bustText;
-    void Start()
-    {
-        splitHandPosition = transform.position + splitHandOffset; // Adjust the offset as needed
+    private TextMeshProUGUI text;
 
+    void Awake()
+    {
         playerCanvas = GetComponentInChildren<Canvas>();
         if (playerCanvas != null)
         {
             // Find the TextMeshProUGUI component within the Canvas
-            bustText = playerCanvas.GetComponentInChildren<TextMeshProUGUI>();
-            playerCanvas.gameObject.SetActive(false); // Hide the canvas
+            text = playerCanvas.GetComponentInChildren<TextMeshProUGUI>();
         }
+    }
+    void Start()
+    {
+        splitHandPosition = transform.position + splitHandOffset; // Adjust the offset as needed
+
+
 
     }
 
@@ -130,15 +134,21 @@ public class Player : MonoBehaviour
 
         return value;
     }
-
-    public void DisplayBust()
+    public void ShowCanvas(bool show)
     {
-        if (bustText != null)
+        playerCanvas.gameObject.SetActive(show);
+
+        if (playerCanvas != null)
         {
-            bustText.text = "BUST";
-            bustText.color = Color.red;
-            playerCanvas.gameObject.SetActive(true); // Make sure the canvas is active
         }
+    }
+    public void DisplayOnCanvas(string textToDisplay, Color color)
+    {
+        if (text == null) return;
+
+        text.text = textToDisplay;
+        text.color = color;
+
     }
 
 
