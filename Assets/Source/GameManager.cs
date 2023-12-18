@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -24,21 +25,10 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
-    void Start()
-    {
-        InitializePlayers();
-        Deck.Instance.ShuffleCards();
-        currentPlayerIndex = 0;
-        //Will be changed to placing bets
-        SetState(GameState.PlacingBets);
-    }
+
+
     void SetState(GameState newState)
     {
         CurrentState = newState;
@@ -50,11 +40,8 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.PlacingBets:
-                foreach (Player player in players)
-                {
-                    Debug.Log("YES");
-                    player.ShowCanvas(false);
-                }
+
+                UIManager.Instance.ShowPlayerUI(false);
                 UIManager.Instance.ShowInputButtons(false);
                 //Activate the slider inside the UIManager
                 UIManager.Instance.SetBetSlider(players[currentPlayerIndex]);
@@ -106,7 +93,6 @@ public class GameManager : MonoBehaviour
     {
         foreach (var player in players)
         {
-            player.ShowCanvas(true);
 
             DealInitialCards(player);
             int handValue = player.CalculateHandValueForHand(player.hand);
@@ -133,6 +119,7 @@ public class GameManager : MonoBehaviour
             }
             //string showOnCanvas = player.CalculateHandValueForHand(player.hand).ToString() + " \n" + player.currentBet.ToString() + "$";
         }
+        UIManager.Instance.ShowPlayerUI(true);
         DealInitialCards(dealer, true);
         if (dealer.CalculateHandValueForHand(dealer.hand) == 21)
         {
@@ -416,6 +403,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        Debug.Log("Restarting game");
         foreach (Player player in players)
         {
 
@@ -445,6 +433,30 @@ public class GameManager : MonoBehaviour
 
 
     }
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Game") // Replace with your Game scene's name
+        {
+            numberOfPlayers = PlayerPrefs.GetInt("PlayerCount", 1);
+            InitializePlayers();
+            //Reset everything
+            RestartGame();
+            SetState(GameState.PlacingBets);
+        }
+    }
+
+    // ... existing GameManager code ...
+
 }
 public enum GameState
 {

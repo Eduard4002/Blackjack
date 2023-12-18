@@ -25,12 +25,8 @@ public class HandDisplay : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional: if the deck should persist across scenes
         }
-        else
-        {
-            Destroy(gameObject); // Ensures there's only one instance
-        }
+
     }
     public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
     {

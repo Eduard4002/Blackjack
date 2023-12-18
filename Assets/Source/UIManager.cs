@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
@@ -31,12 +32,8 @@ public class UIManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
     }
 
     public void OnHitButtonPressed() => GameManager.Instance.PlayerHit();
@@ -47,6 +44,8 @@ public class UIManager : MonoBehaviour
     public void ShowEndRoundSummary(List<Player> players)
     {
         summaryPanel.SetActive(true);
+        betPanel.SetActive(false);
+        ShowInputButtons(false);
 
         // Activate only the needed text objects based on the number of players
         for (int i = 0; i < playerSummaryTexts.Length; i++)
@@ -82,6 +81,7 @@ public class UIManager : MonoBehaviour
     public void SetBetSlider(Player player)
     {
         betPanel.SetActive(true);
+        summaryPanel.SetActive(false);
 
         betSlider.maxValue = player.funds;
         betSlider.value = betSlider.minValue; // Reset to minimum value or a default value
@@ -134,5 +134,18 @@ public class UIManager : MonoBehaviour
     public void ShowSplitButton(bool show)
     {
         splitButton.SetActive(show);
+    }
+
+    public void ShowPlayerUI(bool show)
+    {
+        foreach (Player player in GameManager.Instance.players)
+        {
+            player.ShowCanvas(show);
+        }
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }

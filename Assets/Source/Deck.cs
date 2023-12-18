@@ -11,12 +11,8 @@ public class Deck : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional: if you want the deck to persist across scenes
         }
-        else
-        {
-            Destroy(gameObject); // Ensures there's only one instance
-        }
+
     }
 
     public List<Card> cards = new List<Card>();
