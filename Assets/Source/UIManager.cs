@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [Header("Texts")]
     public TextMeshProUGUI betAmountText;
     public TextMeshProUGUI currentPlayerBetText;
+    public TextMeshProUGUI playerFundsText;
 
 
     [Header("Buttons")]
@@ -63,9 +64,13 @@ public class UIManager : MonoBehaviour
     }
     private string FormatPlayerSummary(Player player)
     {
-        Debug.Log(player.currentBet);
-        string result = player.hasWon ? "Won " + player.wonAmount + " $" : "Lost";
-        return $"Player {player.name}: {result} : Current funds: {player.funds} $";
+        return player.roundResult switch
+        {
+            0 => $"Player {player.name}: Lost : Current funds: {player.funds} $",
+            1 => $"Player {player.name}: Won {player.wonAmount} $ : Current funds: {player.funds} $",
+            2 => $"Player {player.name}: Push : Current funds: {player.funds} $",
+            _ => $"Player {player.name}: Lost : Current funds: {player.funds} $",
+        };
     }
 
     public void HideEndRoundSummary()
@@ -74,28 +79,20 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void SetBetSlider(float maxBet, string playerName)
+    public void SetBetSlider(Player player)
     {
         betPanel.SetActive(true);
-        //betSlider.gameObject.SetActive(true);
-        //placeBetButton.SetActive(true);
-        //betAmountText.gameObject.SetActive(true);
 
-        //ShowInputButtons(false);
-        betSlider.maxValue = maxBet;
+        betSlider.maxValue = player.funds;
         betSlider.value = betSlider.minValue; // Reset to minimum value or a default value
         UpdateBetAmountText(betSlider.value);
-        currentPlayerBetText.text = "Player: " + playerName;
+        currentPlayerBetText.text = "Player: " + player.name;
+        playerFundsText.text = "Funds: " + player.funds + "$";
     }
 
     public void HideBetSlider()
     {
         betPanel.SetActive(false);
-        //betSlider.gameObject.SetActive(false);
-        //placeBetButton.SetActive(false);
-        //betAmountText.gameObject.SetActive(false);
-        //ShowInputButtons(true);
-
     }
 
     public void OnBetSliderChanged(float value)

@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
                 }
                 UIManager.Instance.ShowInputButtons(false);
                 //Activate the slider inside the UIManager
-                UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
+                UIManager.Instance.SetBetSlider(players[currentPlayerIndex]);
                 break;
             case GameState.DealingInitialCards:
                 UIManager.Instance.ShowInputButtons(true);
@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);
+            UIManager.Instance.SetBetSlider(players[currentPlayerIndex]);
         }
     }
 

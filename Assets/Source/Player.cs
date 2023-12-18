@@ -19,7 +19,6 @@ public class Player : MonoBehaviour
     public float currentBet = 0;
 
     public float wonAmount = 0;
-    public bool hasWon = false;
 
     public new string name = "Player";
 
@@ -27,6 +26,8 @@ public class Player : MonoBehaviour
 
     private Canvas playerCanvas;
     private TextMeshProUGUI text;
+
+    public short roundResult; // 0 = loss, 1 = win, 2 = push
 
     void Awake()
     {
@@ -59,7 +60,6 @@ public class Player : MonoBehaviour
     // Methods to handle win/loss
     public void WinBet(bool isBlackJack)
     {
-        hasWon = true;
         if (isBlackJack)
         {
             funds += currentBet + (currentBet * 1.5f);  // 3:2 payout for Blackjack
@@ -70,19 +70,21 @@ public class Player : MonoBehaviour
             funds += currentBet * 2;  // 1:1 payout for regular win
             wonAmount = currentBet * 2;
         }
+        roundResult = 1;
     }
     public void LoseBet()
     {
-        hasWon = false;
+        roundResult = 0;
     }
     public void PushBet()
     {
         funds += currentBet;  // Return the bet to the player
+        roundResult = 2;
     }
     public void Reset()
     {
         currentBet = 0;
-        hasWon = false;
+        roundResult = 0;
         wonAmount = 0;
 
         ResetHand();
@@ -176,7 +178,7 @@ public class Player : MonoBehaviour
     public bool CanSplit()
     {
         // Can split if the player has exactly 2 cards of the same rank
-        return hand.Count == 2 && hand[0].value == hand[1].value;
+        return hand.Count == 2 && hand[0].value == hand[1].value && funds >= currentBet * 2 && !hasSplit;
     }
     public bool CanDoubleDown()
     {
