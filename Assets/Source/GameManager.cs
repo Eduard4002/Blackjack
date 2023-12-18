@@ -217,30 +217,7 @@ public class GameManager : MonoBehaviour
             StartPlayerTurn(); // Move to the next player
         }
     }
-    /*
-    public void PlayerHit()
-    {
-        if (CurrentState != GameState.PlayerTurn)
-        {
-            return;
-        }
 
-        // Handle hit logic
-        Card card = Deck.Instance.GetCard();
-        players[currentPlayerIndex].TakeCard(card);
-        HandDisplay.Instance.DisplayCard(card, players[currentPlayerIndex].transform.position, players[currentPlayerIndex].hand.Count);
-
-        UIManager.Instance.UpdateHandValueText(players[currentPlayerIndex].CalculateHandValue());
-        UIManager.Instance.ShowDoubleDownButton(players[currentPlayerIndex].CanDoubleDown());
-
-        if (players[currentPlayerIndex].CalculateHandValue() > 21)
-        {
-
-            // Player busts, move to the next player
-            currentPlayerIndex++;
-            StartPlayerTurn();
-        }
-    }*/
     public void PlayerHit()
     {
         if (CurrentState != GameState.PlayerTurn)
@@ -257,6 +234,7 @@ public class GameManager : MonoBehaviour
 
 
         HandDisplay.Instance.DisplayCard(card, handPosition, targetHand.Count, false, isPlayingSplitHand);
+        UIManager.Instance.ShowDoubleDownButton(false);
         UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(targetHand));
         Debug.Log("Is the player playing a split hand? " + isPlayingSplitHand);
         if (currentPlayer.CalculateHandValueForHand(targetHand) > 21)
@@ -296,18 +274,7 @@ public class GameManager : MonoBehaviour
             StartPlayerTurn();
         }
     }
-    /*
-    public void PlayerStand()
-    {
-        if (CurrentState != GameState.PlayerTurn)
-        {
-            return;
-        }
 
-        // Player stands, move to the next player
-        currentPlayerIndex++;
-        StartPlayerTurn();
-    }*/
     public void PlayerSplit()
     {
         if (CurrentState != GameState.PlayerTurn)
@@ -391,7 +358,6 @@ public class GameManager : MonoBehaviour
 
             player.Reset();
 
-
         }
         HandDisplay.Instance.ClearAllHands();
 
@@ -406,7 +372,10 @@ public class GameManager : MonoBehaviour
 
         // Reset the state
         currentPlayerIndex = 0;
+
+
         SetState(GameState.DealingInitialCards);
+
 
 
         //UIManager.Instance.SetBetSlider(players[currentPlayerIndex].funds, players[currentPlayerIndex].name);

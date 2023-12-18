@@ -15,6 +15,9 @@ public class HandDisplay : MonoBehaviour
     public Color activeColor = new Color(1f, 1f, 1f, 1f);
     public Color inactiveColor = new Color(0.5f, 0.5f, 0.5f, 1f);
     public Color backColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+
+    public float dealSpeed = 5f; // Adjust this value as needed for the speed of the card animation
+    public Vector3 initialHandPosition = new Vector3(-2.5f, -3.5f, 0f); // Adjust this value as needed for the initial position of the hand
     // Singleton pattern
     public static HandDisplay Instance { get; private set; }
     void Awake()
@@ -29,69 +32,6 @@ public class HandDisplay : MonoBehaviour
             Destroy(gameObject); // Ensures there's only one instance
         }
     }
-    /*
-    public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
-    {
-        // Calculate position based on handPosition and number of cards
-        //Vector3 cardPosition = new Vector3(handPosition.x, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
-        float verticalSpacing = isDealer ? 0 : 0.5f; // No vertical offset for dealer
-        float horizontalOffset = isSplitHand ? 2.0f : 0; // Horizontal offset for split hand
-
-
-        Vector3 cardPosition;
-        if (isDealer)
-        {
-            cardPosition = new Vector3(handPosition.x + horizontalOffset, handPosition.y, 0) + new Vector3(cardSpacing * cardCount, 0, -cardCount);
-        }
-        else
-        {
-            cardPosition = new Vector3(handPosition.x + cardSpacing * cardCount + horizontalOffset, handPosition.y + verticalSpacing * cardCount, -cardCount);
-        }
-
-        GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
-
-
-        if (card.isFlipped)
-        {
-            newCard.GetComponent<SpriteRenderer>().sprite = card.cardBack;
-            newCard.GetComponent<SpriteRenderer>().color = backColor;
-        }
-        else
-        {
-            newCard.GetComponent<SpriteRenderer>().sprite = card.cardImage;
-            newCard.GetComponent<SpriteRenderer>().color = activeColor;
-        }
-        // Add the card and GameObject association to the dictionary
-        cardGameObjectMap[card] = newCard;
-    }*/
-    /* public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
-     {
-         float horizontalSpacing = isDealer ? 0.5f : 0.5f; // Adjust as needed
-         float verticalSpacing = isDealer ? 0 : 0.3f; // No vertical offset for dealer
-
-         // Calculate the horizontal offset for split hand
-         float splitHandOffset = isSplitHand ? 4f : 0; // Horizontal offset to separate the split hand
-
-         Vector3 cardPosition = new Vector3(handPosition.x + splitHandOffset + horizontalSpacing * (isSplitHand ? cardCount - 1 : cardCount),
-                                            handPosition.y + verticalSpacing * cardCount,
-                                            -cardCount);
-
-         GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
-
-
-         if (card.isFlipped)
-         {
-             newCard.GetComponent<SpriteRenderer>().sprite = card.cardBack;
-             newCard.GetComponent<SpriteRenderer>().color = backColor;
-         }
-         else
-         {
-             newCard.GetComponent<SpriteRenderer>().sprite = card.cardImage;
-             newCard.GetComponent<SpriteRenderer>().color = activeColor;
-         }
-         // Add the card and GameObject association to the dictionary
-         cardGameObjectMap[card] = newCard;
-     }*/
     public void DisplayCard(Card card, Vector3 handPosition, int cardCount, bool isDealer = false, bool isSplitHand = false)
     {
         // Check if the card already has a GameObject and needs to be repositioned
@@ -100,14 +40,16 @@ public class HandDisplay : MonoBehaviour
             Debug.Log("Repositioning card object");
             Debug.Log("Hand pos: " + handPosition);
             // Reposition the existing card GameObject
-            existingCardObject.transform.position = handPosition;
+            // Move existing card
+            StartCoroutine(MoveCard(existingCardObject, handPosition, dealSpeed));
+            //existingCardObject.transform.position = handPosition;
         }
         else
         {
             // Instantiate and position the new card GameObject
             Vector3 cardPosition = CalculateCardPosition(handPosition, cardCount, isDealer, isSplitHand);
             Debug.Log("Card pos: " + cardPosition);
-            GameObject newCard = Instantiate(cardPrefab, cardPosition, Quaternion.identity);
+            GameObject newCard = Instantiate(cardPrefab, initialHandPosition, Quaternion.identity);
             if (card.isFlipped)
             {
                 newCard.GetComponent<SpriteRenderer>().sprite = card.cardBack;
@@ -120,6 +62,16 @@ public class HandDisplay : MonoBehaviour
             }
 
             cardGameObjectMap[card] = newCard;
+            StartCoroutine(MoveCard(newCard, cardPosition, dealSpeed));
+
+        }
+    }
+    private IEnumerator MoveCard(GameObject cardObject, Vector3 targetPosition, float speed)
+    {
+        while (cardObject.transform.position != targetPosition)
+        {
+            cardObject.transform.position = Vector3.MoveTowards(cardObject.transform.position, targetPosition, speed * Time.deltaTime);
+            yield return null;
         }
     }
 
