@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+using TMPro;
 public class Player : MonoBehaviour
 {
-    [Header("Card Settings")]
-    //public Vector2 handPosition = new Vector2(0, -2); // Adjust this value as needed for the position of the hand
-
     public readonly List<Card> hand = new List<Card>();
     public List<Card> splitHand = new List<Card>(); // New list for the split hand
 
@@ -25,9 +23,21 @@ public class Player : MonoBehaviour
 
     public new string name = "Player";
 
+
+
+    private Canvas playerCanvas;
+    private TextMeshProUGUI bustText;
     void Start()
     {
         splitHandPosition = transform.position + splitHandOffset; // Adjust the offset as needed
+
+        playerCanvas = GetComponentInChildren<Canvas>();
+        if (playerCanvas != null)
+        {
+            // Find the TextMeshProUGUI component within the Canvas
+            bustText = playerCanvas.GetComponentInChildren<TextMeshProUGUI>();
+            playerCanvas.gameObject.SetActive(false); // Hide the canvas
+        }
 
     }
 
@@ -79,7 +89,7 @@ public class Player : MonoBehaviour
     public void TakeCard(Card card)
     {
         hand.Add(card);
-        handValue = CalculateHandValue();
+        handValue = CalculateHandValueForHand(hand);
 
     }
     void ResetHand()
@@ -89,34 +99,7 @@ public class Player : MonoBehaviour
     }
 
 
-
-    // Calculate the total value of the hand
-    public int CalculateHandValue()
-    {
-        int value = 0;
-        int aceCount = 0;
-        foreach (var card in hand)
-        {
-            if (card.value == 1) // Assuming Ace has a value of 1
-            {
-                aceCount++;
-                value += 11; // Temporarily treat Ace as 11
-            }
-            else
-            {
-                value += card.value;
-            }
-        }
-
-        // Adjust for Aces if total value exceeds 21
-        while (value > 21 && aceCount > 0)
-        {
-            value -= 10; // Change an Ace from 11 to 1
-            aceCount--;
-        }
-
-        return value;
-    }
+    //Calculate the value of the player's hand
     public int CalculateHandValueForHand(List<Card> handToEvaluate)
     {
         int value = 0;
@@ -146,6 +129,16 @@ public class Player : MonoBehaviour
         }
 
         return value;
+    }
+
+    public void DisplayBust()
+    {
+        if (bustText != null)
+        {
+            bustText.text = "BUST";
+            bustText.color = Color.red;
+            playerCanvas.gameObject.SetActive(true); // Make sure the canvas is active
+        }
     }
 
 

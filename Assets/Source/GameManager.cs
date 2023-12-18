@@ -128,12 +128,12 @@ public class GameManager : MonoBehaviour
     }
     void EvaluateWinners()
     {
-        int dealerValue = dealer.CalculateHandValue();
+        int dealerValue = dealer.CalculateHandValueForHand(dealer.hand);
         bool dealerBust = dealerValue > 21;
 
         foreach (Player player in players)
         {
-            int playerValue = player.CalculateHandValue();
+            int playerValue = player.CalculateHandValueForHand(player.hand);
             bool playerBust = playerValue > 21;
 
             if (playerBust)
@@ -204,15 +204,17 @@ public class GameManager : MonoBehaviour
 
         // UI Updates
         UIManager.Instance.UpdateCurrentPlayerText("Player: " + players[currentPlayerIndex].name);
-        UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
+        UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(currentPlayer.hand));
         UIManager.Instance.UpdateCurrentBetText(currentPlayer.currentBet);
         UIManager.Instance.ShowDoubleDownButton(currentPlayer.CanDoubleDown());
         UIManager.Instance.ShowSplitButton(currentPlayer.CanSplit());
 
 
         // Check if currentPlayer's hand value is over 21
-        if (currentPlayer.CalculateHandValue() > 21)
+        if (currentPlayer.CalculateHandValueForHand(currentPlayer.hand) > 21)
         {
+            currentPlayer.DisplayBust();
+
             currentPlayerIndex++;
             StartPlayerTurn(); // Move to the next player
         }
@@ -239,6 +241,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Is the player playing a split hand? " + isPlayingSplitHand);
         if (currentPlayer.CalculateHandValueForHand(targetHand) > 21)
         {
+            currentPlayer.DisplayBust();
             // Player busts, move to the next player
             PlayerStand();
         }
@@ -315,7 +318,7 @@ public class GameManager : MonoBehaviour
             Card card = Deck.Instance.GetCard();
             currentPlayer.TakeCard(card);
             HandDisplay.Instance.DisplayCard(card, currentPlayer.transform.position, currentPlayer.hand.Count);
-            UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValue());
+            UIManager.Instance.UpdateHandValueText(currentPlayer.CalculateHandValueForHand(currentPlayer.hand));
 
             // Proceed to the next player's turn
             currentPlayerIndex++;
@@ -330,17 +333,17 @@ public class GameManager : MonoBehaviour
         HandDisplay.Instance.UpdateCardSprite(dealer.GetHiddenCard());
 
         UIManager.Instance.UpdateCurrentPlayerText("Dealer");
-        UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValue());
+        UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValueForHand(dealer.hand));
         UIManager.Instance.UpdateCurrentBetText(" ");
 
         // Keep hitting until the dealer's hand value reaches or exceeds the threshold
-        while (dealer.CalculateHandValue() < dealerStandValue)
+        while (dealer.CalculateHandValueForHand(dealer.hand) < dealerStandValue)
         {
             yield return new WaitForSeconds(1); // Wait time between hits for better readability
             Card newCard = Deck.Instance.GetCard();
             dealer.TakeCard(newCard);
             HandDisplay.Instance.DisplayCard(newCard, dealer.transform.position, dealer.hand.Count, true);
-            UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValue());
+            UIManager.Instance.UpdateHandValueText(dealer.CalculateHandValueForHand(dealer.hand));
 
         }
 
