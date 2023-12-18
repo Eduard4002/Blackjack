@@ -277,10 +277,12 @@ public class GameManager : MonoBehaviour
 
         HandDisplay.Instance.DisplayCard(card, handPosition, targetHand.Count, false, isPlayingSplitHand);
         UIManager.Instance.ShowDoubleDownButton(false);
+        UIManager.Instance.ShowSplitButton(false);
 
         string showOnCanvas = currentPlayer.CalculateHandValueForHand(targetHand).ToString() + " \n" + currentPlayer.currentBet.ToString() + "$";
         currentPlayer.DisplayOnCanvas(showOnCanvas, new Color(1.0f, 1.0f, 0.0f, 1.0f));
-        Debug.Log("Is the player playing a split hand? " + isPlayingSplitHand);
+
+
         if (currentPlayer.CalculateHandValueForHand(targetHand) > 21)
         {
             currentPlayer.DisplayOnCanvas("BUST", Color.red);
@@ -363,12 +365,17 @@ public class GameManager : MonoBehaviour
             Card card = Deck.Instance.GetCard();
             currentPlayer.TakeCard(card);
             HandDisplay.Instance.DisplayCard(card, currentPlayer.transform.position, currentPlayer.hand.Count);
+
             string showOnCanvas = currentPlayer.CalculateHandValueForHand(currentPlayer.hand).ToString() + " \n" + currentPlayer.currentBet.ToString() + "$";
             currentPlayer.DisplayOnCanvas(showOnCanvas, new Color(1.0f, 1.0f, 0.0f, 1.0f));
 
+            if (currentPlayer.CalculateHandValueForHand(currentPlayer.hand) > 21)
+            {
+                currentPlayer.DisplayOnCanvas("BUST", Color.red);
+
+            }
             // Proceed to the next player's turn
-            currentPlayerIndex++;
-            StartPlayerTurn();
+            PlayerStand();
         }
     }
 
