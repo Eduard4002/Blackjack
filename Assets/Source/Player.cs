@@ -87,6 +87,7 @@ public class Player : MonoBehaviour
         roundResult = 0;
         wonAmount = 0;
 
+        hasSplit = false;
         ResetHand();
     }
 
@@ -101,6 +102,7 @@ public class Player : MonoBehaviour
     void ResetHand()
     {
         hand.Clear();
+        splitHand.Clear();
         handValue = 0;
     }
 
@@ -178,12 +180,12 @@ public class Player : MonoBehaviour
     public bool CanSplit()
     {
         // Can split if the player has exactly 2 cards of the same rank
-        return hand.Count == 2 && hand[0].value == hand[1].value && funds >= currentBet * 2 && !hasSplit;
+        return hand.Count == 2 && hand[0].value == hand[1].value && funds >= currentBet && !hasSplit;
     }
     public bool CanDoubleDown()
     {
         // Usually, double down is allowed only if the player has exactly 2 cards and has not split
-        return hand.Count == 2 && funds >= currentBet * 2 && !hasSplit;
+        return hand.Count == 2 && funds >= currentBet && !hasSplit;
     }
 
 }
