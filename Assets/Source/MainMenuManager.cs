@@ -6,23 +6,53 @@ using UnityEngine.UI;
 using TMPro;
 public class MainMenuManager : MonoBehaviour
 {
-    public TMP_InputField playerCountInputField; // Reference to the input field
+    public Toggle toggleOnePlayer;
+    public Toggle toggleTwoPlayers;
+    public Toggle toggleThreePlayers;
+    public Color selectedColor; // Color for a selected toggle
+    public Color normalColor; // Color for a normal (unselected) toggle
+
+    private void Start()
+    {
+        //Default to 1 player
+        TogglePlayerCountChanged(1);
+    }
+
+    public void TogglePlayerCountChanged(int playerCount)
+    {
+        if (playerCount == 1)
+        {
+            SetToggleColors(toggleOnePlayer, true);
+            SetToggleColors(toggleTwoPlayers, false);
+            SetToggleColors(toggleThreePlayers, false);
+        }
+        else if (playerCount == 2)
+        {
+            SetToggleColors(toggleOnePlayer, false);
+            SetToggleColors(toggleTwoPlayers, true);
+            SetToggleColors(toggleThreePlayers, false);
+        }
+        else if (playerCount == 3)
+        {
+            SetToggleColors(toggleOnePlayer, false);
+            SetToggleColors(toggleTwoPlayers, false);
+            SetToggleColors(toggleThreePlayers, true);
+        }
+
+        PlayerPrefs.SetInt("PlayerCount", playerCount);
+    }
+
+    private void SetToggleColors(Toggle toggle, bool isSelected)
+    {
+        Color currColor = isSelected ? selectedColor : normalColor;
+        toggle.GetComponentInChildren<Image>().color = currColor;
+    }
+
     public void OnPlayButtonClicked()
     {
-        int playerCount;
-        if (int.TryParse(playerCountInputField.text, out playerCount) && playerCount > 0 && playerCount <= 3)
-        {
-            // Save the player count for use in the game scene
-            PlayerPrefs.SetInt("PlayerCount", playerCount);
+        // Load the game scene
+        SceneManager.LoadScene("Game");
 
-            // Load the game scene
-            SceneManager.LoadScene("Game");
-        }
-        else
-        {
-            Debug.LogError("Invalid player count. Please enter a number between 1 and 3.");
-            // Optionally, display this error to the user through the UI.
-        }
     }
 
     public void OnQuitButtonClicked()
